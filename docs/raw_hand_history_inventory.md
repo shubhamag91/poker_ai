@@ -1,0 +1,247 @@
+# Raw hand-history inventory
+
+> Note: this is a GG-focused inventory snapshot derived from `data/hand_histories/raw/_inventory.csv`. The broader `data/hand_histories/raw/` tree now also contains some non-GG archive and misc files, so the live raw-folder count can be higher than the counts below.
+
+- Total HH files: **200**
+- Date range: **20260118** to **20260315**
+- CSV inventory: `/Users/shubham/Projects/poker_ai/data/hand_histories/raw/_inventory.csv`
+
+## By series
+
+- Other: 72
+- Bounty Hunters: 48
+- APL Series: 32
+- WSOP-SC: 25
+- Sunday Hundred Grand: 14
+- GGMasters: 9
+
+## By family
+
+- Sunday Special: 25
+- Sunday Hundred Grand 15, 100K GTD: 14
+- Mini Forty Stack: 10
+- Mini Grand Prix: 7
+- Sunday Mini Marathon: 6
+- Zodiac Sunday Evening Classic + Horse: 6
+- Sunday Superstack: 6
+- Zodiac Sunday Main Event + Wukong: 6
+- Sunday Mini MONSTER Stack: 6
+- Zodiac Sunday Bounty + Rooster: 5
+- Daily Special: 5
+- Mini Main: 5
+- Mini Winter GRAND PRIX: 4
+- Sunday Mini CRAZY EIGHTS: 4
+- Special: 4
+- Mini GRAND PRIX Super Circuit: 4
+- Sunday MERRYTHON: 3
+- Classic: 3
+- Sunday Main Event: 3
+- Sunday Fifty Stack: 3
+
+## By buy-in
+
+- 2.50: 6
+- 3: 1
+- 4: 4
+- 4.40: 10
+- 5: 6
+- 5.40: 11
+- 5.50: 3
+- 7: 3
+- 8: 1
+- 8.88: 20
+- 10: 5
+- 10.80: 7
+- 15: 29
+- 21.60: 5
+- 22: 3
+- 25: 32
+- 30: 6
+- 33: 6
+- 40: 1
+- 44: 5
+- 54: 8
+- 55: 7
+- 100: 1
+- 110: 9
+- 220: 2
+- 330: 1
+- 388: 7
+- 550: 1
+
+## By date
+
+- 20260118: 11
+- 20260124: 1
+- 20260125: 7
+- 20260201: 13
+- 20260205: 1
+- 20260208: 27
+- 20260209: 12
+- 20260210: 10
+- 20260212: 2
+- 20260215: 24
+- 20260216: 18
+- 20260222: 24
+- 20260225: 2
+- 20260228: 1
+- 20260301: 31
+- 20260307: 6
+- 20260308: 8
+- 20260315: 2
+
+## Date × family × buy-in batches
+
+- 20260118 | MEGA to The Weekender, 160 Seats | 10: 1
+- 20260118 | Mini Sunday Winter CLASSIC | 25: 2
+- 20260118 | Mini Winter GRAND PRIX | 25: 2
+- 20260118 | Sunday Hundred Grand 15, 100K GTD | 15: 3
+- 20260118 | Sunday MERRYTHON | 30: 1
+- 20260118 | Sunday Special | 10.80: 1
+- 20260118 | Sunday Special | 5.40: 1
+- 20260124 | Classic | 25: 1
+- 20260125 | Mini Winter GRAND PRIX | 25: 2
+- 20260125 | Sunday Hundred Grand 15, 100K GTD | 15: 1
+- 20260125 | Sunday MERRYTHON | 30: 2
+- 20260125 | Sunday Special | 10.80: 1
+- 20260125 | Sunday Special 15 | 7: 1
+- 20260201 | Grand 10.80 | 40: 1
+- 20260201 | Mini Grand Prix | 25: 1
+- 20260201 | Sunday Hundred Grand 15, 100K GTD | 15: 3
+- 20260201 | Sunday Main Event | 54: 1
+- 20260201 | Sunday Mini Main | 25: 1
+- 20260201 | Sunday Mini Marathon | 5: 2
+- 20260201 | Sunday Special | 10.80: 2
+- 20260201 | Sunday Special | 2.50: 1
+- 20260201 | Sunday Special | 8.88: 1
+- 20260205 | Mini Forty Stack | 4.40: 1
+- 20260208 | Mini Grand Prix | 25: 3
+- 20260208 | Sunday Fifty Stack | 5.50: 1
+- 20260208 | Sunday Marathon | 30: 2
+- 20260208 | Sunday Mini CRAZY EIGHTS | 8.88: 2
+- 20260208 | Sunday Mini Marathon | 5: 1
+- 20260208 | Sunday Monster Stack | 2.50: 2
+- 20260208 | Sunday Special | 21.60: 1
+- 20260208 | Sunday Special | 4: 2
+- 20260208 | Sunday Special | 8.88: 2
+- 20260208 | Sunday Superstack | 8.88: 2
+- 20260208 | Zodiac Bounty + Rooster | 550: 1
+- 20260208 | Zodiac Sunday Bounty + Horse | 33: 1
+- 20260208 | Zodiac Sunday Bounty + Rooster | 55: 1
+- 20260208 | Zodiac Sunday Evening Classic + Horse | 110: 4
+- 20260208 | Zodiac Sunday Main Event + Wukong | 388: 2
+- 20260209 | Big Game | 21.60: 1
+- 20260209 | Daily Main | 54: 1
+- 20260209 | Daily Special | 10: 2
+- 20260209 | Daily Special | 2.50: 1
+- 20260209 | GGMasters Classic Special | 25: 1
+- 20260209 | Mini Big Game | 2.50: 1
+- 20260209 | Mini Forty Stack | 4.40: 2
+- 20260209 | Mini Main | 5.40: 2
+- 20260209 | Mini Monday Monster Stack | 15: 1
+- 20260210 | Asia | 25: 1
+- 20260210 | Forty Stack | 44: 1
+- 20260210 | Mini Forty Stack | 4.40: 3
+- 20260210 | Mini Main | 5.40: 1
+- 20260210 | Special | 15: 1
+- 20260210 | Zodiac Bounty + Horse | 33: 1
+- 20260210 | Zodiac Bounty + Rooster | 55: 1
+- 20260210 | Zodiac Evening Classic + Horse | 110: 1
+- 20260212 | Classic | 25: 1
+- 20260212 | Mini Thursday Throwdown | 15: 1
+- 20260215 | Mini Grand Prix | 25: 1
+- 20260215 | Sunday Big Game | 21.60: 2
+- 20260215 | Sunday Fifty Stack | 5.50: 1
+- 20260215 | Sunday Forty Stack | 44: 1
+- 20260215 | Sunday Hundred Grand 15, 100K GTD | 15: 2
+- 20260215 | Sunday Main Event | 54: 1
+- 20260215 | Sunday Mini CRAZY EIGHTS | 8.88: 2
+- 20260215 | Sunday Mini Marathon | 5: 1
+- 20260215 | Sunday Monster Stack | 25: 1
+- 20260215 | Sunday Special | 10.80: 1
+- 20260215 | Sunday Special | 4: 1
+- 20260215 | Sunday Special | 5.40: 1
+- 20260215 | Sunday Special | 8.88: 1
+- 20260215 | Sunday Special 15 | 7: 1
+- 20260215 | Sunday Superstack | 8.88: 1
+- 20260215 | Zodiac Sunday Bounty + Horse | 33: 1
+- 20260215 | Zodiac Sunday Bounty + Horse | 330: 1
+- 20260215 | Zodiac Sunday Bounty + Rooster | 55: 1
+- 20260215 | Zodiac Sunday Bounty Prime + Wukong | 220: 1
+- 20260215 | Zodiac Sunday Evening Classic + Horse | 110: 1
+- 20260215 | Zodiac Sunday Main Event + Wukong | 388: 1
+- 20260216 | Classic | 25: 1
+- 20260216 | Daily Main | 54: 1
+- 20260216 | Daily Special | 10: 2
+- 20260216 | Deepstack Turbo | 8.88: 1
+- 20260216 | Fifty Stack | 5.50: 1
+- 20260216 | Forty Stack | 44: 1
+- 20260216 | Grand 10.80 | 30: 1
+- 20260216 | Mini Forty Stack | 4.40: 3
+- 20260216 | Mini Main | 5.40: 1
+- 20260216 | Mini Monday Monster Stack | 15: 1
+- 20260216 | Special | 15: 1
+- 20260216 | Special | 2.50: 1
+- 20260216 | Superstack Special | 8.88: 1
+- 20260216 | Zodiac Evening Classic + Horse | 110: 2
+- 20260222 | #18 APL Mini Main | 8: 1
+- 20260222 | Mini Grand Prix | 25: 2
+- 20260222 | Sunday Forty Stack | 44: 1
+- 20260222 | Sunday Hundred Grand 15, 100K GTD | 15: 2
+- 20260222 | Sunday Main Event | 54: 1
+- 20260222 | Sunday Mini Marathon | 5: 2
+- 20260222 | Sunday Special | 10.80: 1
+- 20260222 | Sunday Special | 15: 1
+- 20260222 | Sunday Special | 3: 1
+- 20260222 | Sunday Special | 4: 1
+- 20260222 | Sunday Special | 5.40: 1
+- 20260222 | Sunday Special | 8.88: 1
+- 20260222 | Sunday Special 2.50 | 7: 1
+- 20260222 | Sunday Superstack | 8.88: 2
+- 20260222 | Zodiac Sunday Bounty + Rooster | 55: 2
+- 20260222 | Zodiac Sunday Classic + Rabbit | 22: 1
+- 20260222 | Zodiac Sunday Evening Classic + Horse | 110: 1
+- 20260222 | Zodiac Sunday Main Event + Wukong | 388: 2
+- 20260225 | Mini Forty Stack | 4.40: 1
+- 20260225 | Zodiac Main Event + Wukong | 388: 1
+- 20260228 | Satellite to 1M GGMasters 150, 6 Seats | 15: 1
+- 20260301 | Bounty Flowery FORTY STACK | 44: 1
+- 20260301 | Bounty Hunters Circuit Freezeout | 15: 1
+- 20260301 | Bounty Hunters Sunday Main Event | 54: 1
+- 20260301 | Midnight Madness II | 8.88: 3
+- 20260301 | Mini GRAND PRIX Super Circuit | 25: 3
+- 20260301 | Satellite to 1M GGMasters 150, 10 Seats | 15: 1
+- 20260301 | Satellite to 1M GGMasters 150, 12 Seats | 15: 1
+- 20260301 | Sunday Big Game | 21.60: 1
+- 20260301 | Sunday Bounty Dream of Spring | 15: 1
+- 20260301 | Sunday Fifty Stack | 55: 1
+- 20260301 | Sunday Hundred Grand 15, 100K GTD | 15: 2
+- 20260301 | Sunday Mini MARATHON | 33: 3
+- 20260301 | Sunday Mini MONSTER Stack | 25: 2
+- 20260301 | Sunday Mini Super CLASSIC | 25: 2
+- 20260301 | Sunday Special | 10.80: 1
+- 20260301 | Sunday Special | 5.40: 1
+- 20260301 | Sunday Superstack | 8.88: 1
+- 20260301 | Zodiac Sunday Bounty + Rooster | 55: 1
+- 20260301 | Zodiac Sunday Bounty Prime + Wukong | 220: 1
+- 20260301 | Zodiac Sunday Classic + Rabbit | 22: 2
+- 20260301 | Zodiac Sunday Main Event + Wukong | 388: 1
+- 20260307 | Bounty Dream of Spring | 15: 1
+- 20260307 | Bounty Hunters Circuit Edition | 54: 1
+- 20260307 | Bounty Warm-Up 25 | 100: 1
+- 20260307 | Fifty Stack | 5.40: 1
+- 20260307 | Mini Main | 5.40: 1
+- 20260307 | Special | 15: 1
+- 20260308 | Bounty Hunters Sunday Main Event | 54: 1
+- 20260308 | Mini GRAND PRIX Super Circuit | 25: 1
+- 20260308 | Sunday Bounty Dream of Spring | 15: 1
+- 20260308 | Sunday Hundred Grand 15, 100K GTD | 15: 1
+- 20260308 | Sunday Mini MONSTER Stack | 25: 3
+- 20260308 | Sunday Special | 5.40: 1
+- 20260315 | Sunday Bounty Dream of Spring | 15: 1
+- 20260315 | Sunday Mini MONSTER Stack | 25: 1
+
+## Notes
+
+- This is a non-destructive index. Raw files stay in place.
+- Use the CSV when building heuristic slices across date, family, or buy-in.

@@ -1,0 +1,28 @@
+# Env / secrets
+.env
+
+# OS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+
+# Hand histories - large binary data (don't track)
+data/hand_histories/
+
+# Articles - large binaries ( PDFs, spreadsheets, docs )
+articles/library/**/*.pdf
+articles/library/**/*.xlsx
+articles/library/**/*.docx
+articles/library/**/*.pptx
+
+# Temporary / build files
+tmp/
+
+# IDE
+.vscode/
+
+# Legacy experiment code
+code/experiments/
