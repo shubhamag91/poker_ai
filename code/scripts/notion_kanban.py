@@ -8,6 +8,10 @@ import urllib.request
 import urllib.error
 from datetime import datetime
 from typing import Optional
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 NOTION_TOKEN = os.environ.get("NOTION_TOKEN", "")
 DATABASE_ID = "9712ae00-067d-47af-8ba2-e8e73b9e0f6e"
