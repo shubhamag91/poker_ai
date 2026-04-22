@@ -1,0 +1,917 @@
+{
+  "version": 1,
+  "description": "Tournament archetype lookup table for ICM context estimation. Covers 125 summaries parsed from the hand-history corpus. Paid seats and ITM% are estimates based on GG field-size bands.",
+  "source": "data/hand_histories/summaries/*.txt",
+  "total_summaries": 125,
+  "paid_seats_lookup": {
+    "9": 3,
+    "27": 5,
+    "50": 7,
+    "100": 10,
+    "200": 15,
+    "300": 20,
+    "500": 30,
+    "1000": 50,
+    "2000": 75,
+    "3000": 100,
+    "5000": 150,
+    "10000": 200,
+    "20000": 300,
+    "99999999": 400
+  },
+  "clusters": [
+    {
+      "cluster": "PKO",
+      "tournament_name": "Bounty Hunters Sunday Special $10.80, Hold'em No Limit",
+      "count": 7,
+      "players_range": "8772-16865",
+      "buyin_range": "10.80",
+      "avg_prize_per_player": 9.94,
+      "estimated_paid_seats": 2530,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "regular",
+      "tournament_name": "Sunday Hundred Grand $15, $100K GTD, Hold'em No Limit",
+      "count": 7,
+      "players_range": "9423-11440",
+      "buyin_range": "15.00",
+      "avg_prize_per_player": 13.8,
+      "estimated_paid_seats": 1716,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Mini",
+      "tournament_name": "Mini Forty Stack $4.40, Hold'em No Limit",
+      "count": 5,
+      "players_range": "2114-2508",
+      "buyin_range": "4.40",
+      "avg_prize_per_player": 4.05,
+      "estimated_paid_seats": 376,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "PKO",
+      "tournament_name": "Bounty Hunters Sunday Special $5.40, Hold'em No Limit",
+      "count": 5,
+      "players_range": "13533-15190",
+      "buyin_range": "5.40",
+      "avg_prize_per_player": 4.97,
+      "estimated_paid_seats": 2278,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "PKO",
+      "tournament_name": "Bounty Hunters Sunday Special $8.88, Hold'em No Limit",
+      "count": 5,
+      "players_range": "3395-8923",
+      "buyin_range": "8.88",
+      "avg_prize_per_player": 8.17,
+      "estimated_paid_seats": 1338,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Grand_Prix+Mini",
+      "tournament_name": "Mini Grand Prix $25, Hold'em No Limit",
+      "count": 4,
+      "players_range": "5769-6398",
+      "buyin_range": "25.00",
+      "avg_prize_per_player": 23.0,
+      "estimated_paid_seats": 960,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Marathon+Mini",
+      "tournament_name": "Sunday Mini Marathon $5, Hold'em No Limit",
+      "count": 4,
+      "players_range": "4487-4681",
+      "buyin_range": "5.00",
+      "avg_prize_per_player": 4.6,
+      "estimated_paid_seats": 702,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Mini+PKO",
+      "tournament_name": "Bounty Hunters Mini Main $5.40, Hold'em No Limit",
+      "count": 4,
+      "players_range": "9654-11353",
+      "buyin_range": "5.40",
+      "avg_prize_per_player": 4.97,
+      "estimated_paid_seats": 1703,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "regular",
+      "tournament_name": "Sunday Superstack $8.88, Hold'em No Limit",
+      "count": 4,
+      "players_range": "2085-2324",
+      "buyin_range": "8.88",
+      "avg_prize_per_player": 8.17,
+      "estimated_paid_seats": 349,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "GGMasters",
+      "tournament_name": "GGMasters Classic $25, $45K GTD, Hold'em No Limit",
+      "count": 3,
+      "players_range": "2290-2552",
+      "buyin_range": "25.00",
+      "avg_prize_per_player": 23.0,
+      "estimated_paid_seats": 383,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Mini+Monster+WSOP_SC",
+      "tournament_name": "WSOP-SC: $25 Sunday Mini MONSTER Stack, Hold'em No Limit",
+      "count": 3,
+      "players_range": "8176-8261",
+      "buyin_range": "25.00",
+      "avg_prize_per_player": 23.0,
+      "estimated_paid_seats": 1239,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "PKO",
+      "tournament_name": "Bounty Hunters Sunday Main Event $54, $750K GTD, Hold'em No Limit",
+      "count": 3,
+      "players_range": "22087-23477",
+      "buyin_range": "54.00",
+      "avg_prize_per_player": 49.68,
+      "estimated_paid_seats": 3522,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "PKO+WSOP_SC",
+      "tournament_name": "WSOP-SC: $15 Sunday Bounty Dream of Spring, Hold'em No Limit",
+      "count": 3,
+      "players_range": "17851-18615",
+      "buyin_range": "15.00",
+      "avg_prize_per_player": 13.8,
+      "estimated_paid_seats": 2792,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "regular",
+      "tournament_name": "Sunday Special $4, Hold'em No Limit",
+      "count": 3,
+      "players_range": "1092-1129",
+      "buyin_range": "4.00",
+      "avg_prize_per_player": 3.68,
+      "estimated_paid_seats": 169,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "7max+PKO",
+      "tournament_name": "Bounty Hunters Sunday Special $15 [7-Max], Hold'em No Limit",
+      "count": 2,
+      "players_range": "4072-4291",
+      "buyin_range": "15.00",
+      "avg_prize_per_player": 13.8,
+      "estimated_paid_seats": 644,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Daily",
+      "tournament_name": "Daily Special $10, Hold'em No Limit",
+      "count": 2,
+      "players_range": "2396-2491",
+      "buyin_range": "10.00",
+      "avg_prize_per_player": 9.2,
+      "estimated_paid_seats": 374,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Daily+PKO",
+      "tournament_name": "Bounty Hunters Daily Main $54, Hold'em No Limit",
+      "count": 2,
+      "players_range": "6312-8106",
+      "buyin_range": "54.00",
+      "avg_prize_per_player": 49.68,
+      "estimated_paid_seats": 1216,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Fifty",
+      "tournament_name": "Sunday Fifty Stack $5.50, Hold'em No Limit",
+      "count": 2,
+      "players_range": "2057-3846",
+      "buyin_range": "5.50",
+      "avg_prize_per_player": 5.06,
+      "estimated_paid_seats": 577,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Grand_Prix+Mini",
+      "tournament_name": "$25 Mini Winter GRAND PRIX, Hold'em No Limit",
+      "count": 2,
+      "players_range": "10181-10355",
+      "buyin_range": "25.00",
+      "avg_prize_per_player": 23.73,
+      "estimated_paid_seats": 1553,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Grand_Prix+Mini+WSOP_SC",
+      "tournament_name": "WSOP-SC: $25 Mini GRAND PRIX Super Circuit, Hold'em No Limit",
+      "count": 2,
+      "players_range": "9145-9845",
+      "buyin_range": "25.00",
+      "avg_prize_per_player": 23.0,
+      "estimated_paid_seats": 1477,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Mini",
+      "tournament_name": "Sunday Mini CRAZY EIGHTS $8.88, Hold'em No Limit",
+      "count": 2,
+      "players_range": "4435-4574",
+      "buyin_range": "8.88",
+      "avg_prize_per_player": 8.17,
+      "estimated_paid_seats": 686,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Mini+Monster",
+      "tournament_name": "Mini Monday Monster Stack $15, Hold'em No Limit",
+      "count": 2,
+      "players_range": "2913-3253",
+      "buyin_range": "15.00",
+      "avg_prize_per_player": 13.8,
+      "estimated_paid_seats": 488,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "PKO",
+      "tournament_name": "Bounty Hunters Special $15, Hold'em No Limit",
+      "count": 2,
+      "players_range": "4776-5448",
+      "buyin_range": "15.00",
+      "avg_prize_per_player": 13.8,
+      "estimated_paid_seats": 817,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "PKO",
+      "tournament_name": "Bounty Hunters Sunday Big Game $21.60, Hold'em No Limit",
+      "count": 2,
+      "players_range": "11573-11781",
+      "buyin_range": "21.60",
+      "avg_prize_per_player": 19.87,
+      "estimated_paid_seats": 1767,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "PKO",
+      "tournament_name": "Bounty Hunters Sunday Forty Stack $44, Hold'em No Limit",
+      "count": 2,
+      "players_range": "6718-7014",
+      "buyin_range": "44.00",
+      "avg_prize_per_player": 40.48,
+      "estimated_paid_seats": 1052,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "regular",
+      "tournament_name": "$30 Sunday MERRYTHON, Hold'em No Limit",
+      "count": 2,
+      "players_range": "5213-5285",
+      "buyin_range": "30.00",
+      "avg_prize_per_player": 28.55,
+      "estimated_paid_seats": 793,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "7max+PKO",
+      "tournament_name": "Bounty Hunters Special $15 [7-Max], Hold'em No Limit",
+      "count": 1,
+      "players_range": "2414-2414",
+      "buyin_range": "15.00",
+      "avg_prize_per_player": 13.8,
+      "estimated_paid_seats": 362,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "7max+PKO",
+      "tournament_name": "Bounty Hunters Special $2.50 [7-Max], Hold'em No Limit",
+      "count": 1,
+      "players_range": "2844-2844",
+      "buyin_range": "2.50",
+      "avg_prize_per_player": 2.3,
+      "estimated_paid_seats": 427,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "7max+PKO",
+      "tournament_name": "Bounty Hunters Sunday Special $2.50 [7-Max], Hold'em No Limit",
+      "count": 1,
+      "players_range": "3447-3447",
+      "buyin_range": "2.50",
+      "avg_prize_per_player": 2.3,
+      "estimated_paid_seats": 517,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Daily",
+      "tournament_name": "Daily Special $2.50, Hold'em No Limit",
+      "count": 1,
+      "players_range": "1897-1897",
+      "buyin_range": "2.50",
+      "avg_prize_per_player": 2.3,
+      "estimated_paid_seats": 285,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Fifty",
+      "tournament_name": "Fifty Stack $5.50, Hold'em No Limit",
+      "count": 1,
+      "players_range": "1915-1915",
+      "buyin_range": "5.50",
+      "avg_prize_per_player": 5.06,
+      "estimated_paid_seats": 287,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Fifty+PKO",
+      "tournament_name": "Bounty Hunters Fifty Stack $5.40, Hold'em No Limit",
+      "count": 1,
+      "players_range": "8727-8727",
+      "buyin_range": "5.40",
+      "avg_prize_per_player": 4.97,
+      "estimated_paid_seats": 1309,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Fifty+WSOP_SC",
+      "tournament_name": "WSOP-SC: $55 Sunday Fifty Stack, Hold'em No Limit",
+      "count": 1,
+      "players_range": "4638-4638",
+      "buyin_range": "55.00",
+      "avg_prize_per_player": 50.6,
+      "estimated_paid_seats": 696,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "GGMasters",
+      "tournament_name": "$25 GGMasters Classic Special, $75K GTD, Hold'em No Limit",
+      "count": 1,
+      "players_range": "4284-4284",
+      "buyin_range": "25.00",
+      "avg_prize_per_player": 23.0,
+      "estimated_paid_seats": 643,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "GGMasters",
+      "tournament_name": "GGMasters Asia $25, $35K GTD, Hold'em No Limit",
+      "count": 1,
+      "players_range": "2112-2112",
+      "buyin_range": "25.00",
+      "avg_prize_per_player": 23.0,
+      "estimated_paid_seats": 317,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "GGMasters+PKO",
+      "tournament_name": "GGMasters Bounty Warm-Up $25, $100K GTD, Hold'em No Limit",
+      "count": 1,
+      "players_range": "5950-5950",
+      "buyin_range": "25.00",
+      "avg_prize_per_player": 23.0,
+      "estimated_paid_seats": 892,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "GGMasters+Satellite",
+      "tournament_name": "$15 Satellite to $1M GGMasters $150, 10 Seats, Hold'em No Limit",
+      "count": 1,
+      "players_range": "179-179",
+      "buyin_range": "15.00",
+      "avg_prize_per_player": 13.8,
+      "estimated_paid_seats": 27,
+      "itm_pct": 15.1
+    },
+    {
+      "cluster": "GGMasters+Satellite",
+      "tournament_name": "$15 Satellite to $1M GGMasters $150, 12 Seats, Hold'em No Limit",
+      "count": 1,
+      "players_range": "137-137",
+      "buyin_range": "15.00",
+      "avg_prize_per_player": 13.8,
+      "estimated_paid_seats": 21,
+      "itm_pct": 15.3
+    },
+    {
+      "cluster": "GGMasters+Satellite",
+      "tournament_name": "$15 Satellite to $1M GGMasters $150, 6 Seats, Hold'em No Limit",
+      "count": 1,
+      "players_range": "57-57",
+      "buyin_range": "15.00",
+      "avg_prize_per_player": 15.79,
+      "estimated_paid_seats": 10,
+      "itm_pct": 17.5
+    },
+    {
+      "cluster": "Hyper",
+      "tournament_name": "Midnight Madness II $8.88 [Hyper], Hold'em No Limit",
+      "count": 1,
+      "players_range": "1103-1103",
+      "buyin_range": "8.88",
+      "avg_prize_per_player": 8.17,
+      "estimated_paid_seats": 165,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Marathon",
+      "tournament_name": "Sunday Marathon $30, Hold'em No Limit",
+      "count": 1,
+      "players_range": "2965-2965",
+      "buyin_range": "30.00",
+      "avg_prize_per_player": 27.6,
+      "estimated_paid_seats": 445,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Marathon+Mini+WSOP_SC",
+      "tournament_name": "WSOP-SC: $33 Sunday Mini MARATHON, Hold'em No Limit",
+      "count": 1,
+      "players_range": "5281-5281",
+      "buyin_range": "33.00",
+      "avg_prize_per_player": 30.36,
+      "estimated_paid_seats": 792,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Mega",
+      "tournament_name": "$10 MEGA to The Weekender, 160 Seats, Hold'em No Limit",
+      "count": 1,
+      "players_range": "758-758",
+      "buyin_range": "10.00",
+      "avg_prize_per_player": 10.55,
+      "estimated_paid_seats": 114,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Mini",
+      "tournament_name": "$25 Mini Sunday Winter CLASSIC, Hold'em No Limit",
+      "count": 1,
+      "players_range": "6687-6687",
+      "buyin_range": "25.00",
+      "avg_prize_per_player": 23.75,
+      "estimated_paid_seats": 1003,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Mini",
+      "tournament_name": "Sunday Mini Main $25, Hold'em No Limit",
+      "count": 1,
+      "players_range": "5151-5151",
+      "buyin_range": "25.00",
+      "avg_prize_per_player": 23.0,
+      "estimated_paid_seats": 773,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Mini+PKO",
+      "tournament_name": "Bounty Hunters Mini Big Game $2.50, Hold'em No Limit",
+      "count": 1,
+      "players_range": "9004-9004",
+      "buyin_range": "2.50",
+      "avg_prize_per_player": 2.3,
+      "estimated_paid_seats": 1351,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Mini+PKO",
+      "tournament_name": "Mini Thursday Throwdown $15 [Bounty], Hold'em No Limit",
+      "count": 1,
+      "players_range": "7360-7360",
+      "buyin_range": "15.00",
+      "avg_prize_per_player": 13.8,
+      "estimated_paid_seats": 1104,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Mini+WSOP_SC",
+      "tournament_name": "WSOP-SC: $25 Sunday Mini Super CLASSIC, Hold'em No Limit",
+      "count": 1,
+      "players_range": "6244-6244",
+      "buyin_range": "25.00",
+      "avg_prize_per_player": 23.0,
+      "estimated_paid_seats": 937,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Monster",
+      "tournament_name": "Sunday Monster Stack $2.50, Hold'em No Limit",
+      "count": 1,
+      "players_range": "3979-3979",
+      "buyin_range": "2.50",
+      "avg_prize_per_player": 2.3,
+      "estimated_paid_seats": 597,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "Monster",
+      "tournament_name": "Sunday Monster Stack $25, Hold'em No Limit",
+      "count": 1,
+      "players_range": "4106-4106",
+      "buyin_range": "25.00",
+      "avg_prize_per_player": 23.0,
+      "estimated_paid_seats": 616,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "PKO",
+      "tournament_name": "Bounty Hunters 30 Grand $10.80, Hold'em No Limit",
+      "count": 1,
+      "players_range": "4299-4299",
+      "buyin_range": "10.80",
+      "avg_prize_per_player": 9.94,
+      "estimated_paid_seats": 645,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "PKO",
+      "tournament_name": "Bounty Hunters 40 Grand $10.80, Hold'em No Limit",
+      "count": 1,
+      "players_range": "6973-6973",
+      "buyin_range": "10.80",
+      "avg_prize_per_player": 9.94,
+      "estimated_paid_seats": 1046,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "PKO",
+      "tournament_name": "Bounty Hunters Big Game $21.60, Hold'em No Limit",
+      "count": 1,
+      "players_range": "5629-5629",
+      "buyin_range": "21.60",
+      "avg_prize_per_player": 19.87,
+      "estimated_paid_seats": 844,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "PKO",
+      "tournament_name": "Bounty Hunters Deepstack Turbo $8.88, Hold'em No Limit",
+      "count": 1,
+      "players_range": "4654-4654",
+      "buyin_range": "8.88",
+      "avg_prize_per_player": 8.17,
+      "estimated_paid_seats": 698,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "PKO",
+      "tournament_name": "Bounty Hunters Forty Stack $44, Hold'em No Limit",
+      "count": 1,
+      "players_range": "2140-2140",
+      "buyin_range": "44.00",
+      "avg_prize_per_player": 40.48,
+      "estimated_paid_seats": 321,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "PKO",
+      "tournament_name": "Bounty Hunters Sunday Special $2.50, Hold'em No Limit",
+      "count": 1,
+      "players_range": "6147-6147",
+      "buyin_range": "2.50",
+      "avg_prize_per_player": 2.3,
+      "estimated_paid_seats": 922,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "PKO",
+      "tournament_name": "Bounty Hunters Sunday Special $21.60, Hold'em No Limit",
+      "count": 1,
+      "players_range": "4229-4229",
+      "buyin_range": "21.60",
+      "avg_prize_per_player": 19.87,
+      "estimated_paid_seats": 634,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "PKO+WSOP_SC",
+      "tournament_name": "WSOP-SC: $15 Bounty Dream of Spring, Hold'em No Limit",
+      "count": 1,
+      "players_range": "11736-11736",
+      "buyin_range": "15.00",
+      "avg_prize_per_player": 13.8,
+      "estimated_paid_seats": 1760,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "PKO+WSOP_SC",
+      "tournament_name": "WSOP-SC: $15 Bounty Hunters Circuit Freezeout, Hold'em No Limit",
+      "count": 1,
+      "players_range": "11368-11368",
+      "buyin_range": "15.00",
+      "avg_prize_per_player": 13.8,
+      "estimated_paid_seats": 1705,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "PKO+WSOP_SC",
+      "tournament_name": "WSOP-SC: $44 Bounty Flowery FORTY STACK, Hold'em No Limit",
+      "count": 1,
+      "players_range": "9625-9625",
+      "buyin_range": "44.00",
+      "avg_prize_per_player": 40.48,
+      "estimated_paid_seats": 1444,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "PKO+WSOP_SC",
+      "tournament_name": "WSOP-SC: $54 Bounty Hunters Circuit Edition, Hold'em No Limit",
+      "count": 1,
+      "players_range": "9285-9285",
+      "buyin_range": "54.00",
+      "avg_prize_per_player": 49.68,
+      "estimated_paid_seats": 1393,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "PKO+WSOP_SC",
+      "tournament_name": "WSOP-SC: $54 Bounty Hunters Sunday Main Event, $1M GTD, Hold'em No Limit",
+      "count": 1,
+      "players_range": "24388-24388",
+      "buyin_range": "54.00",
+      "avg_prize_per_player": 49.68,
+      "estimated_paid_seats": 3658,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "PKO+WSOP_SC",
+      "tournament_name": "WSOP-SC: $54 Bounty Hunters Sunday Main Event, Hold'em No Limit",
+      "count": 1,
+      "players_range": "22974-22974",
+      "buyin_range": "54.00",
+      "avg_prize_per_player": 49.68,
+      "estimated_paid_seats": 3446,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "regular",
+      "tournament_name": "Forty Stack $44, Hold'em No Limit",
+      "count": 1,
+      "players_range": "741-741",
+      "buyin_range": "44.00",
+      "avg_prize_per_player": 40.48,
+      "estimated_paid_seats": 111,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "regular",
+      "tournament_name": "Sunday Special $15, Hold'em No Limit",
+      "count": 1,
+      "players_range": "499-499",
+      "buyin_range": "15.00",
+      "avg_prize_per_player": 13.8,
+      "estimated_paid_seats": 75,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "regular",
+      "tournament_name": "Sunday Special $3, Hold'em No Limit",
+      "count": 1,
+      "players_range": "1888-1888",
+      "buyin_range": "3.00",
+      "avg_prize_per_player": 2.76,
+      "estimated_paid_seats": 283,
+      "itm_pct": 15.0
+    },
+    {
+      "cluster": "regular",
+      "tournament_name": "Superstack Special $8.88, Hold'em No Limit",
+      "count": 1,
+      "players_range": "1316-1316",
+      "buyin_range": "8.88",
+      "avg_prize_per_player": 8.17,
+      "estimated_paid_seats": 197,
+      "itm_pct": 15.0
+    }
+  ],
+  "cluster_summary": {
+    "7max+PKO": {
+      "instances": 5,
+      "unique_archetypes": 4,
+      "buyins": [
+        "15.00",
+        "2.50"
+      ],
+      "players_range": "4072-4291"
+    },
+    "Daily": {
+      "instances": 3,
+      "unique_archetypes": 2,
+      "buyins": [
+        "10.00",
+        "2.50"
+      ],
+      "players_range": "2396-2491"
+    },
+    "Daily+PKO": {
+      "instances": 2,
+      "unique_archetypes": 1,
+      "buyins": [
+        "54.00"
+      ],
+      "players_range": "6312-8106"
+    },
+    "Fifty": {
+      "instances": 3,
+      "unique_archetypes": 2,
+      "buyins": [
+        "5.50"
+      ],
+      "players_range": "2057-3846"
+    },
+    "Fifty+PKO": {
+      "instances": 1,
+      "unique_archetypes": 1,
+      "buyins": [
+        "5.40"
+      ],
+      "players_range": "8727-8727"
+    },
+    "Fifty+WSOP_SC": {
+      "instances": 1,
+      "unique_archetypes": 1,
+      "buyins": [
+        "55.00"
+      ],
+      "players_range": "4638-4638"
+    },
+    "GGMasters": {
+      "instances": 5,
+      "unique_archetypes": 3,
+      "buyins": [
+        "25.00"
+      ],
+      "players_range": "2290-2552"
+    },
+    "GGMasters+PKO": {
+      "instances": 1,
+      "unique_archetypes": 1,
+      "buyins": [
+        "25.00"
+      ],
+      "players_range": "5950-5950"
+    },
+    "GGMasters+Satellite": {
+      "instances": 3,
+      "unique_archetypes": 3,
+      "buyins": [
+        "15.00"
+      ],
+      "players_range": "179-179"
+    },
+    "Grand_Prix+Mini": {
+      "instances": 6,
+      "unique_archetypes": 2,
+      "buyins": [
+        "25.00"
+      ],
+      "players_range": "5769-6398"
+    },
+    "Grand_Prix+Mini+WSOP_SC": {
+      "instances": 2,
+      "unique_archetypes": 1,
+      "buyins": [
+        "25.00"
+      ],
+      "players_range": "9145-9845"
+    },
+    "Hyper": {
+      "instances": 1,
+      "unique_archetypes": 1,
+      "buyins": [
+        "8.88"
+      ],
+      "players_range": "1103-1103"
+    },
+    "Marathon": {
+      "instances": 1,
+      "unique_archetypes": 1,
+      "buyins": [
+        "30.00"
+      ],
+      "players_range": "2965-2965"
+    },
+    "Marathon+Mini": {
+      "instances": 4,
+      "unique_archetypes": 1,
+      "buyins": [
+        "5.00"
+      ],
+      "players_range": "4487-4681"
+    },
+    "Marathon+Mini+WSOP_SC": {
+      "instances": 1,
+      "unique_archetypes": 1,
+      "buyins": [
+        "33.00"
+      ],
+      "players_range": "5281-5281"
+    },
+    "Mega": {
+      "instances": 1,
+      "unique_archetypes": 1,
+      "buyins": [
+        "10.00"
+      ],
+      "players_range": "758-758"
+    },
+    "Mini": {
+      "instances": 9,
+      "unique_archetypes": 4,
+      "buyins": [
+        "25.00",
+        "4.40",
+        "8.88"
+      ],
+      "players_range": "2114-2508"
+    },
+    "Mini+Monster": {
+      "instances": 2,
+      "unique_archetypes": 1,
+      "buyins": [
+        "15.00"
+      ],
+      "players_range": "2913-3253"
+    },
+    "Mini+Monster+WSOP_SC": {
+      "instances": 3,
+      "unique_archetypes": 1,
+      "buyins": [
+        "25.00"
+      ],
+      "players_range": "8176-8261"
+    },
+    "Mini+PKO": {
+      "instances": 6,
+      "unique_archetypes": 3,
+      "buyins": [
+        "15.00",
+        "2.50",
+        "5.40"
+      ],
+      "players_range": "9654-11353"
+    },
+    "Mini+WSOP_SC": {
+      "instances": 1,
+      "unique_archetypes": 1,
+      "buyins": [
+        "25.00"
+      ],
+      "players_range": "6244-6244"
+    },
+    "Monster": {
+      "instances": 2,
+      "unique_archetypes": 2,
+      "buyins": [
+        "2.50",
+        "25.00"
+      ],
+      "players_range": "3979-3979"
+    },
+    "PKO": {
+      "instances": 33,
+      "unique_archetypes": 14,
+      "buyins": [
+        "10.80",
+        "15.00",
+        "2.50",
+        "21.60",
+        "44.00",
+        "5.40",
+        "54.00",
+        "8.88"
+      ],
+      "players_range": "8772-16865"
+    },
+    "PKO+WSOP_SC": {
+      "instances": 9,
+      "unique_archetypes": 7,
+      "buyins": [
+        "15.00",
+        "44.00",
+        "54.00"
+      ],
+      "players_range": "17851-18615"
+    },
+    "regular": {
+      "instances": 20,
+      "unique_archetypes": 8,
+      "buyins": [
+        "15.00",
+        "3.00",
+        "30.00",
+        "4.00",
+        "44.00",
+        "8.88"
+      ],
+      "players_range": "9423-11440"
+    }
+  }
+}

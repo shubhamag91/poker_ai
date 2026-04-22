@@ -60,11 +60,15 @@ def parse_total_players(text: str) -> Optional[int]:
     return int(match.group(1).replace(",", "")) if match else None
 
 
+TOURNAMENT_NAME_PATTERN = re.compile(r"Tournament\s+#\d+,\s*(.+)", re.IGNORECASE)
+
 def parse_tournament_summary_file(summary_path: Path) -> dict:
     text = read_text(summary_path)
+    name_m = TOURNAMENT_NAME_PATTERN.search(text)
     return {
         "path": summary_path,
         "tournament_id": extract_tournament_id(text),
+        "tournament_name": name_m.group(1).strip() if name_m else "",
         "total_players": parse_total_players(text),
         "finish_place": parse_finish_place(text),
     }

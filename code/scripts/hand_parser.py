@@ -14,6 +14,7 @@ from openai import OpenAI
 import urllib.request
 import urllib.error
 from postflop_trees import build_flop_tree_spec_library, filtered_flop_specs
+from tournament_context import enrich_tournament_summary, paid_seats_for_field_size, itm_pct_for_field_size
 
 DEFAULT_HERO_NAME = "Hero"
 DEFAULT_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2")
@@ -49,7 +50,8 @@ def discover_tournament_summary(input_path: Path, explicit_summary: Optional[str
         summary_path = Path(explicit_summary).expanduser().resolve()
         if not summary_path.exists():
             raise FileNotFoundError(f"Summary file not found: {summary_path}")
-        return parse_tournament_summary_file(summary_path)
+        raw_summary = parse_tournament_summary_file(summary_path)
+        return enrich_tournament_summary(raw_summary, raw_summary.get("tournament_name", ""))
 
     if not input_path.exists():
         return None
@@ -72,7 +74,7 @@ def discover_tournament_summary(input_path: Path, explicit_summary: Optional[str
                 continue
             parsed = parse_tournament_summary_file(candidate)
             if parsed.get("tournament_id") == tournament_id:
-                return parsed
+                return enrich_tournament_summary(parsed, parsed.get("tournament_name", ""))
     return None
 
 
@@ -108,12 +110,25 @@ def build_summary_stage_hint(summary: Optional[dict]) -> dict:
             f"Hero later busted {finish_place:,}th, so this hand was played with at least {finish_place:,} players still alive"
         )
 
+    icm = summary.get("icm", {})
+    if icm:
+        paid = icm.get("estimated_paid_seats")
+        itm = icm.get("itm_pct")
+        cluster = icm.get("cluster")
+        if paid:
+            note_parts.append(f"~{paid} paid ({itm}% ITM)")
+        if cluster:
+            note_parts.append(f"cluster: {cluster}")
+
     return {
         "available": True,
         "field_size_band": field_band,
         "total_players": total_players,
         "finish_place": finish_place,
         "min_players_remaining": lower_bound_players_remaining,
+        "icm_cluster": icm.get("cluster") if icm else None,
+        "estimated_paid_seats": icm.get("estimated_paid_seats") if icm else None,
+        "itm_pct": icm.get("itm_pct") if icm else None,
         "note": "; ".join(note_parts),
     }
 
@@ -500,6 +515,7 @@ def summarize_rule_verdict(context: dict) -> str:
         "under_1bb_correct_commit": "With 1 BB or less, committing the stack is protected by the rule layer.",
         "raise_too_small_short_stack": "At a critical short stack, a small raise should usually become an open shove.",
         "reasonable_open_shove": "This stack-depth and hand-class combination fits a reasonable open-shove rule bucket.",
+        "reasonable_open_raise": "This stack-depth and hand-class combination fits a reasonable min-raise rule bucket.",
         "strong_hand_call_vs_shove": "Strong aces and solid pairs are protected continue hands in call-versus-shove spots at these stack depths.",
         "conservative_blind_fold_vs_shove": "In blind defense versus a shove, conservative folds with weak dominated hands are protected by the rule layer.",
         "overdefend_blind_call_vs_shove": "The rule layer flags this as an over-defend in a blind-versus-shove spot.",
@@ -570,6 +586,26 @@ def extract_flop_cards(hand: str) -> list[str]:
         if match:
             return [match.group(1), match.group(2), match.group(3)]
     return []
+
+
+def extract_turn_card(hand: str) -> Optional[str]:
+    for line in hand.splitlines():
+        if not line.startswith("*** TURN ***"):
+            continue
+        match = re.search(r"\[(..)\s+(..)\s+(..)\s+(..)\]", line)
+        if match:
+            return match.group(4)
+    return None
+
+
+def extract_river_card(hand: str) -> Optional[str]:
+    for line in hand.splitlines():
+        if not line.startswith("*** RIVER ***"):
+            continue
+        match = re.search(r"\[(..)\s+(..)\s+(..)\s+(..)\s+(..)\]", line)
+        if match:
+            return match.group(5)
+    return None
 
 
 def flop_texture_features(cards: list[str]) -> dict:
@@ -1401,6 +1437,8 @@ def extract_preflop_context(hand: str, hero_name: str) -> dict:
         decision_type = "call_or_fold_vs_shove"
     elif unopened and hero_action == "raise_all_in":
         decision_type = "open_shove"
+    elif unopened and hero_action == "raise":
+        decision_type = "open_raise"
     elif prior_raises >= 1 and hero_action == "raise_all_in":
         decision_type = "reshove"
     elif prior_raises >= 1 and hero_action == "fold":
@@ -1785,12 +1823,20 @@ def estimate_stage_icm_note(hand: str, info: dict, table_players: int, tournamen
 
     buyin = profile.get("buyin")
     buyin_tag = f"GG ¥{buyin}" if buyin is not None else "GG"
+    summary_hint = profile.get("summary_hint", {})
+    icm_cluster = summary_hint.get("icm_cluster")
+    paid = summary_hint.get("estimated_paid_seats")
+    itm = summary_hint.get("itm_pct")
+    icm_str = ""
+    if paid and itm:
+        icm_str = f" [{paid} paid ({itm}% ITM)]"
+    if icm_cluster and icm_cluster != "regular":
+        icm_str += f" [{icm_cluster}]"
     note = (
         f"Approx stage/ICM: {profile['stage_label']}, {profile['pressure_band']} pressure "
         f"({buyin_tag} 8-max archetype, Level {profile['level']}, ante {profile['ante_ratio'] if profile['ante_ratio'] is not None else '?'} BB, "
-        f"{profile['uncertainty']}-band estimate); {profile['note']}."
+        f"{profile['uncertainty']}-band estimate){icm_str}; {profile['note']}."
     )
-    summary_hint = profile.get("summary_hint", {})
     if summary_hint.get("available"):
         note += f" Linked summary: {summary_hint['note']}."
     return note
@@ -2115,6 +2161,15 @@ def is_reasonable_open_shove(position_group: str, stack_bucket: str, hand_class:
     return False
 
 
+def is_reasonable_open_raise(position_group: str, stack_bucket: str, hand_class: str) -> bool:
+    min_raise_hands = {"premium_pair", "medium_pair", "strong_ace", "strong_broadway", "suited_ace", "wheel_ace", "middling_broadway", "small_pair"}
+    if stack_bucket == "deeper":
+        return hand_class in min_raise_hands
+    if stack_bucket == "shallow":
+        return hand_class in min_raise_hands | {"low_suited_connector"}
+    return True
+
+
 def rule_based_analysis(
     hand: str,
     info: dict,
@@ -2186,6 +2241,19 @@ def rule_based_analysis(
             "Mistake: No clear mistake.\n"
             "Better play: No better play than open-shove.\n"
             f"Reason: With a {stack_bucket.replace('_', ' ')} stack in {position}, this hand class ({hand_class.replace('_', ' ')}) is a reasonable open-shove candidate.\n"
+            "Confidence: high",
+            context,
+        )
+
+    if (
+        context["decision_type"] == "open_raise"
+        and is_reasonable_open_raise(position_group, stack_bucket, hand_class)
+    ):
+        context["matched_rule"] = "reasonable_open_raise"
+        return (
+            "Mistake: No clear mistake.\n"
+            "Better play: No better play than min-raise.\n"
+            f"Reason: With a {stack_bucket.replace('_', ' ')} stack in {position}, this hand class ({hand_class.replace('_', ' ')}) is a reasonable min-raise candidate.\n"
             "Confidence: high",
             context,
         )
