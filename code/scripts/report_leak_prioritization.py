@@ -110,6 +110,11 @@ def get_icm_multiplier(icm_context: dict) -> float:
 
 
 def extract_preflop_leaks() -> dict[str, Any]:
+    from preflop_baseline import (
+        bucket_stack_depth, get_baseline, classify_action, compare_decision,
+        get_call_off_baseline, get_reshove_baseline
+    )
+    
     leaks = []
     
     for pf in PARSED_ROOT.glob("*_analysis.txt"):
@@ -123,6 +128,22 @@ def extract_preflop_leaks() -> dict[str, Any]:
                     hand_class = spot.get("hand_class", "unknown")
                     stack_bb = spot.get("hero_bb", 20)
                     position = spot.get("position", "?")
+                    
+                    # Map position to position_group
+                    pos_group = "blind" if position in ("SB", "BB") else "late" if position in ("CO", "BTN") else "middle" if position in ("MP", "HJ", "LJ") else "early"
+                    
+                    # Compare to baseline
+                    baseline_deviation = None
+                    if decision in ("open_shove", "open_raise") and stack_bb:
+                        stack_bucket = bucket_stack_depth(stack_bb)
+                        baseline = get_baseline(stack_bucket, pos_group)
+                        if baseline:
+                            expected = classify_action(hand_class, baseline)
+                            if decision == "open_shove" and expected != "push":
+                                baseline_deviation = f"expected_{expected}_got_push"
+                            elif decision == "open_raise" and expected != "min_raise":
+                                baseline_deviation = f"expected_{expected}_got_min_raise"
+                    
                     leak_type = None
                     if decision in ("open_shove", "open_raise"):
                         leak_type = "open_jam_leak"
@@ -143,6 +164,7 @@ def extract_preflop_leaks() -> dict[str, Any]:
                             "position": position,
                             "decision": decision,
                             "file": pf.name,
+                            "baseline_deviation": baseline_deviation,
                         })
                 continue
             except json.JSONDecodeError:
