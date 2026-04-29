@@ -296,6 +296,56 @@ def cmd_stats(args) -> None:
         print(f"  {dec}: {count}")
 
 
+def cmd_filter(args) -> None:
+    results = []
+    for json_file in PARSED_ROOT.glob("*_analysis.json"):
+        try:
+            data = json.loads(json_file.read_text())
+        except:
+            continue
+        for spot in data.get("spots", []):
+            if args.hand_class and spot.get("hand_class") != args.hand_class:
+                continue
+            if args.position and spot.get("position") != args.position:
+                continue
+            if args.stack_band:
+                bb = spot.get("hero_bb", 0)
+                if args.stack_band == "10-15bb" and not (10 <= bb <= 15):
+                    continue
+                if args.stack_band == "15-20bb" and not (15 <= bb <= 20):
+                    continue
+                if args.stack_band == "20+bb" and bb < 20:
+                    continue
+            leak = False
+            if args.leak:
+                mistake = spot.get("mistake", "")
+                if mistake and mistake.lower() not in ("no clear mistake", "none", ""):
+                    leak = True
+                else:
+                    continue
+            results.append({
+                "file": json_file.stem,
+                "index": spot.get("index"),
+                "stack": spot.get("hero_bb"),
+                "position": spot.get("position"),
+                "hand_class": spot.get("hand_class"),
+                "decision": spot.get("decision_type"),
+                "mistake": spot.get("mistake"),
+            })
+            if len(results) >= args.limit:
+                break
+        if len(results) >= args.limit:
+            break
+    if args.format == "json":
+        print(json.dumps(results, indent=2))
+    else:
+        print(f"Found {len(results)} hands")
+        print("=" * 60)
+        for h in results:
+            print(f"{h['stack']:.1f} BB @ {h['position']} | {h['hand_class']} | {h['decision']}")
+            print(f"  Mistake: {h['mistake'][:60] if h['mistake'] else 'None'}")
+
+
 def main():
     parser = argparse.ArgumentParser(description="poker_ai Study CLI")
     subparsers = parser.add_subparsers(dest="command", help="Commands")
@@ -323,6 +373,14 @@ def main():
     progress_parser = subparsers.add_parser("progress", help="Leak progress over time")
     progress_parser.add_argument("--limit", type=int, help="Number of leaks")
     
+    filter_parser = subparsers.add_parser("filter", help="Filter hands by criteria")
+    filter_parser.add_argument("--hand-class", help="Hand class (e.g., premium_pair)")
+    filter_parser.add_argument("--position", help="Position (e.g., CO)")
+    filter_parser.add_argument("--stack-band", help="Stack band (10-15bb, 15-20bb, 20+bb)")
+    filter_parser.add_argument("--leak", action="store_true", help="Only leak hands")
+    filter_parser.add_argument("--limit", type=int, default=10, help="Max results")
+    filter_parser.add_argument("--format", choices=["text", "json"], default="text")
+    
     args = parser.parse_args()
     
     if args.command == "top":
@@ -339,6 +397,8 @@ def main():
         cmd_compare(args)
     elif args.command == "progress":
         cmd_progress(args)
+    elif args.command == "filter":
+        cmd_filter(args)
     else:
         parser.print_help()
         print("\nExamples:")
