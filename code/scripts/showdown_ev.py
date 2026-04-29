@@ -230,4 +230,25 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--leak-class")
+    parser.add_argument("--limit", type=int, default=100)
+    parser.add_argument("--output", action="store_true")
+    args = parser.parse_args()
+    
+    if args.output:
+        OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
+        results = aggregate_by_class()
+        output_file = OUTPUT_ROOT / "latest.json"
+        output_file.write_text(json.dumps({"by_leak_class": results}, indent=2))
+        print(f"Wrote: {output_file}")
+    elif args.leak_class:
+        hands = find_showdowns(args.leak_class, args.limit)
+        print(f"Found {len(hands)} showdowns for {args.leak_class}")
+    else:
+        results = aggregate_by_class()
+        print("Showdown EV by Leak Class")
+        print("=" * 50)
+        for hc, data in sorted(results.items(), key=lambda x: -x[1]["n"]):
+            print(f"{hc}: n={data['n']} win_rate={data['win_rate']:.1%} avg_pot=${data['avg_pot']:.0f} avg_equity={data.get('avg_equity', 0):.1%}")
