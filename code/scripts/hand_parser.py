@@ -2589,21 +2589,41 @@ def main():
     output_path.write_text(report, encoding="utf-8")
 
     json_path = output_path.with_suffix(".json")
+    
+    # Extract LLM verdict from analysis text
+    def extract_verdict_fields(analysis: str) -> dict:
+        result = {"mistake": None, "better_play": None, "reason": None, "confidence": None, "verdict_source": None}
+        for line in analysis.splitlines():
+            if line.startswith("Mistake:"):
+                result["mistake"] = line.split(":", 1)[1].strip()
+            elif line.startswith("Better play:"):
+                result["better_play"] = line.split(":", 1)[1].strip()
+            elif line.startswith("Reason:"):
+                result["reason"] = line.split(":", 1)[1].strip()[:200]
+            elif line.startswith("Confidence:"):
+                result["confidence"] = line.split(":", 1)[1].strip()
+            elif line.startswith("Verdict source:"):
+                result["verdict_source"] = line.split(":", 1)[1].strip()
+        return result
+    
+    spots_list = []
+    for i, (_, info), ctx, analysis in zip(range(len(important_hands)), important_hands, contexts, analyses):
+        spot = {
+            "index": i + 1,
+            "hero_bb": info.get("hero_bb"),
+            "position": info.get("position"),
+            "decision_type": ctx.get("decision_type", "unknown"),
+            "hand_class": ctx.get("hand_class", "unknown"),
+        }
+        spot.update(extract_verdict_fields(analysis))
+        spots_list.append(spot)
+    
     json_export = {
         "schema_version": "1",
         "input_file": str(input_path),
         "run_time": datetime.now().isoformat(timespec="seconds"),
         "hands_analyzed": len(important_hands),
-        "spots": [
-            {
-                "index": i + 1,
-                "hero_bb": info.get("hero_bb"),
-                "position": info.get("position"),
-                "decision_type": ctx.get("decision_type", "unknown"),
-                "hand_class": ctx.get("hand_class", "unknown"),
-            }
-            for i, (_, info), ctx in zip(range(len(important_hands)), important_hands, contexts)
-        ],
+        "spots": spots_list,
     }
     json_path.write_text(json.dumps(json_export, indent=2), encoding="utf-8")
 
