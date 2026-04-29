@@ -60,7 +60,7 @@ def extract_all_preflop_decisions(parsed_dir: Path) -> list[dict]:
                 else:
                     action = "other"
             elif "facing a" in hand_block:
-                if decision == "call_or_fold_vs_shove":
+                if decision in ("call_vs_shove", "fold_vs_shove"):
                     spot_type = "call_off"
                     action = "call" if "calls" in hand_block else "fold"
                 elif decision == "reshove":

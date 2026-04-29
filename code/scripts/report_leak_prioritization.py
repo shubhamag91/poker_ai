@@ -11,6 +11,7 @@ from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 PARSED_ROOT = PROJECT_ROOT / "data" / "hand_histories" / "parsed"
+POSTFLOP_ROOT = PROJECT_ROOT / "data" / "hand_histories" / "postflop_hero_flop_actions"
 REPORT_ROOT = PROJECT_ROOT / "data" / "hand_histories" / "leak_prioritization"
 
 EV_COST_ESTIMATES = {
@@ -112,6 +113,41 @@ def extract_preflop_leaks() -> dict[str, Any]:
     leaks = []
     
     for pf in PARSED_ROOT.glob("*_analysis.txt"):
+        json_path = pf.with_suffix(".json")
+        
+        if json_path.exists():
+            try:
+                data = json.loads(json_path.read_text())
+                for spot in data.get("spots", []):
+                    decision = spot.get("decision_type", "unknown")
+                    hand_class = spot.get("hand_class", "unknown")
+                    stack_bb = spot.get("hero_bb", 20)
+                    position = spot.get("position", "?")
+                    leak_type = None
+                    if decision in ("open_shove", "open_raise"):
+                        leak_type = "open_jam_leak"
+                    elif decision == "min_raise":
+                        leak_type = "min_raise_leak"
+                    elif decision in ("call_vs_shove", "fold_vs_shove"):
+                        leak_type = "call_off_fold"
+                    elif decision == "reshove":
+                        leak_type = "reshove_wrong"
+                    elif decision in ("flat_call_vs_raise", "fold_to_raise"):
+                        leak_type = "3bet_leak"
+                    if leak_type:
+                        leaks.append({
+                            "type": leak_type,
+                            "street": "preflop",
+                            "hand_class": hand_class,
+                            "stack_bb": stack_bb,
+                            "position": position,
+                            "decision": decision,
+                            "file": pf.name,
+                        })
+                continue
+            except json.JSONDecodeError:
+                pass
+        
         content = pf.read_text()
         
         icm_context = extract_icm_context(content)
@@ -138,7 +174,7 @@ def extract_preflop_leaks() -> dict[str, Any]:
                 leak_type = "open_jam_leak"
             elif decision == "min_raise" and is_mistake:
                 leak_type = "min_raise_leak"
-            elif decision == "call_or_fold_vs_shove":
+            elif decision in ("call_vs_shove", "fold_vs_shove"):
                 if is_mistake:
                     leak_type = "call_off_fold"
             elif decision == "reshove":
@@ -158,6 +194,191 @@ def extract_preflop_leaks() -> dict[str, Any]:
                     "file": pf.name,
                     "icm_context": icm_context,
                     "icm_multiplier": get_icm_multiplier(icm_context),
+                })
+    
+    return leaks
+
+
+def extract_postflop_leaks() -> list[dict[str, Any]]:
+    from postflop_baseline import get_cbet_baseline, compare_frequency
+    
+    postflop_json = POSTFLOP_ROOT / "latest.json"
+    if not postflop_json.exists():
+        return []
+    
+    try:
+        data = json.loads(postflop_json.read_text())
+    except json.JSONDecodeError:
+        return []
+    
+    leaks = []
+    spot_summary = data.get("spot_summary", {})
+    
+    for family_id, buckets in spot_summary.items():
+        for bucket_key, summary in buckets.items():
+            hand_count = summary.get("hand_count", 0)
+            if hand_count < 3:
+                continue
+            
+            action_counts = summary.get("hero_action_counts", {})
+            total_actions = sum(action_counts.values())
+            if total_actions == 0:
+                continue
+            
+            bet_count = action_counts.get("bet", 0)
+            cbet_rate = bet_count / total_actions if total_actions > 0 else 0
+            
+            family_short = family_id.replace("_flop", "") if "_flop" in family_id else family_id
+            parts = bucket_key.split(" | ")
+            # Format: "caller | board_bucket | context" or "open_raiser | board_bucket | context"
+            hero_role = parts[0] if len(parts) > 0 else ""
+            board_bucket = parts[1] if len(parts) > 1 else "UNKNOWN"
+            # Map hero role to IP/OOP
+            position = "OOP" if hero_role in ("caller", "defender") else "IP"
+            
+            baseline = get_cbet_baseline(family_short, position, board_bucket, "shallow")
+            if not baseline:
+                continue
+            
+            comparison = compare_frequency("small_bet", cbet_rate, baseline)
+            
+            if comparison["status"] == "leak" and abs(comparison["deviation"]) > 0.10:
+                leaks.append({
+                    "type": "flop_cbet_miss",
+                    "street": "postflop",
+                    "hand_class": board_bucket,
+                    "stack_bb": 0,
+                    "position": position,
+                    "decision": family_short,
+                    "file": "postflop_actions",
+                    "actual_freq": cbet_rate,
+                    "expected_freq": comparison["expected_freq"],
+                    "deviation": comparison["deviation"],
+                    "hand_count": hand_count,
+                })
+    
+    return leaks
+
+
+DEEPER_ROOT = PROJECT_ROOT / "data" / "hand_histories" / "postflop_hero_deeper_actions"
+
+
+def extract_turn_river_leaks() -> list[dict[str, Any]]:
+    from postflop_baseline import get_turn_barrel_baseline, get_river_bet_baseline
+    
+    deeper_json = DEEPER_ROOT / "latest.json"
+    if not deeper_json.exists():
+        return []
+    
+    try:
+        data = json.loads(deeper_json.read_text())
+    except json.JSONDecodeError:
+        return []
+    
+    leaks = []
+    turn_summary = data.get("turn_summary", {})
+    river_summary = data.get("river_summary", {})
+    
+    for family_id, buckets in turn_summary.items():
+        for bucket_key, summary in buckets.items():
+            hand_count = summary.get("hand_count", 0)
+            if hand_count < 3:
+                continue
+            action_counts = summary.get("hero_action_counts", {})
+            total = sum(action_counts.values())
+            if total == 0:
+                continue
+            
+            # Parse bucket key: "family | hero_role | board_bucket | context"
+            parts = bucket_key.split(" | ")
+            if len(parts) < 2:
+                continue
+            hero_role = parts[0]
+            board_bucket = parts[1]
+            position = "OOP" if hero_role in ("caller", "defender") else "IP"
+            family_short = family_id.replace("_flop", "") if "_flop" in family_id else family_id
+            
+            baseline = get_turn_barrel_baseline(family_short, position, board_bucket, "shallow")
+            if not baseline:
+                continue
+        for bucket_key, summary in buckets.items():
+            hand_count = summary.get("hand_count", 0)
+            if hand_count < 3:
+                continue
+            action_counts = summary.get("hero_action_counts", {})
+            total = sum(action_counts.values())
+            if total == 0:
+                continue
+            bet_count = action_counts.get("bet", 0)
+            bet_rate = bet_count / total if total > 0 else 0
+            
+            parts = bucket_key.split(" | ")
+            if len(parts) < 3:
+                continue
+            # Format: "family_flop | hero_role | board_bucket | context"
+            hero_role = parts[1] if len(parts) > 1 else ""
+            board_bucket = parts[2] if len(parts) > 2 else "UNKNOWN"
+            position = "OOP" if hero_role in ("caller", "defender") else "IP"
+            family_short = family_id.replace("_flop", "") if "_flop" in family_id else family_id
+            
+            baseline = get_turn_barrel_baseline(family_short, position, board_bucket, "shallow")
+            if not baseline:
+                continue
+            
+            deviation = bet_rate - baseline.barrel_freq
+            if abs(deviation) > 0.10:
+                leaks.append({
+                    "type": "turn_barrel_miss",
+                    "street": "postflop",
+                    "hand_class": board_bucket,
+                    "stack_bb": 0,
+                    "position": position,
+                    "decision": family_short,
+                    "file": "deeper_actions",
+                    "actual_freq": bet_rate,
+                    "expected_freq": baseline.barrel_freq,
+                    "deviation": deviation,
+                    "hand_count": hand_count,
+                })
+    
+    for family_id, buckets in river_summary.items():
+        for bucket_key, summary in buckets.items():
+            hand_count = summary.get("hand_count", 0)
+            if hand_count < 3:
+                continue
+            action_counts = summary.get("hero_action_counts", {})
+            total = sum(action_counts.values())
+            if total == 0:
+                continue
+            bet_count = action_counts.get("bet", 0)
+            bet_rate = bet_count / total if total > 0 else 0
+            
+            parts = bucket_key.split(" | ")
+            if len(parts) < 3:
+                continue
+            hero_role = parts[1] if len(parts) > 1 else ""
+            board_bucket = parts[2] if len(parts) > 2 else "UNKNOWN"
+            position = "OOP" if hero_role in ("caller", "defender") else "IP"
+            family_short = family_id.replace("_flop", "") if "_flop" in family_id else family_id
+            
+            baseline = get_river_bet_baseline(family_short, position, board_bucket, "shallow")
+            if not baseline:
+                continue
+            
+            deviation = bet_rate - baseline.bet_freq
+            if abs(deviation) > 0.10:
+                leaks.append({
+                    "type": "river_bet_miss",
+                    "street": "postflop",
+                    "hand_class": board_bucket,
+                    "stack_bb": 0,
+                    "position": position,
+                    "decision": family_short,
+                    "file": "deeper_actions",
+                    "actual_freq": bet_rate,
+                    "expected_freq": baseline.bet_freq,
+                    "deviation": deviation,
+                    "hand_count": hand_count,
                 })
     
     return leaks
@@ -216,13 +437,17 @@ def get_leak_description(leak_type: str) -> str:
 
 def build_leak_report() -> dict[str, Any]:
     preflop_leaks = extract_preflop_leaks()
+    postflop_leaks = extract_postflop_leaks()
+    turn_river_leaks = extract_turn_river_leaks()
+    
+    all_leaks = preflop_leaks + postflop_leaks + turn_river_leaks
     
     leak_counts = defaultdict(int)
     leak_details = defaultdict(list)
     leak_icm_sum = defaultdict(float)
     leak_stages = defaultdict(list)
     
-    for leak in preflop_leaks:
+    for leak in all_leaks:
         key = f"{leak['street']}:{leak['type']}"
         leak_counts[key] += 1
         leak_icm_sum[key] += leak.get("icm_multiplier", 1.0)

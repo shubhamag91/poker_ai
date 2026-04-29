@@ -1,9 +1,9 @@
 # poker_ai Session Context
 # Auto-managed by opencode agent
-# Last updated: 2026-04-22
+# Last updated: 2026-04-29
 
 ## Current Milestone
-**Milestone B: ICM-aware preflop benchmark** — Completed
+**Milestone C: Postflop Tendency Deepening** — Completed
 
 ## Project Status
 - Linear project: https://linear.app/mose/project/poker-ai-e33721cdc012/overview
@@ -27,10 +27,23 @@
 - B2: Call-off & reshove baselines (50 spots)
 - B3: PKO-adjust preflop baseline
 
-### Milestones C-E (Backlog)
-- C: Postflop tendency deepening
+### Milestone C (Completed 2026-04-29)
+- C.1: postflop_baseline.py — 45 spots (cbet/donk/probe)
+- C.2: Postflop evaluator in leak report (13 flop leaks)
+- C.3: Turn/river baselines (15 turn + 8 river) + extractor
+- Total: 533 leaks in ranking (491 preflop + 42 postflop)
+
+### Phase 0 (Completed 2026-04-29)
+- MOS-55: Foundational parser fixes
+- MOS-56: call_vs_shove / fold_vs_shove split
+- MOS-57: JSON sidecar emission
+
+### Milestones D-H (Backlog)
 - D: Leak prioritization engine
 - E: Study products and workflow
+- F: Calibrated EV
+- G: Knowledge integration
+- H: Long-term analytics
 
 ## Key Context
 - Parser entry: code/scripts/hand_parser.py

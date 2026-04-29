@@ -1433,8 +1433,10 @@ def extract_preflop_context(hand: str, hero_name: str) -> dict:
     unopened = prior_raises == 0 and prior_calls == 0 and not facing_all_in
 
     decision_type = "other"
-    if facing_all_in and hero_action in {"call", "fold"}:
-        decision_type = "call_or_fold_vs_shove"
+    if facing_all_in and hero_action == "call":
+        decision_type = "call_vs_shove"
+    elif facing_all_in and hero_action == "fold":
+        decision_type = "fold_vs_shove"
     elif unopened and hero_action == "raise_all_in":
         decision_type = "open_shove"
     elif unopened and hero_action == "raise":
@@ -2259,7 +2261,7 @@ def rule_based_analysis(
         )
 
     if (
-        context["decision_type"] == "call_or_fold_vs_shove"
+        context["decision_type"] in ("call_vs_shove", "fold_vs_shove")
         and stack_bucket in {"shove_critical", "short", "shallow"}
         and context["hero_action"] == "call"
         and is_clear_continue_vs_shove(cards, stack_bucket, stage_nudge)
@@ -2275,7 +2277,7 @@ def rule_based_analysis(
 
     if (
         position_group == "blind"
-        and context["decision_type"] == "call_or_fold_vs_shove"
+        and context["decision_type"] in ("call_vs_shove", "fold_vs_shove")
         and isinstance(hero_bb, (int, float))
         and hero_bb <= 15
         and is_weak_blind_defense_hand(cards)
@@ -2346,7 +2348,7 @@ def analyze_hand(
     tournament_summary: Optional[dict] = None,
     input_path: Optional[Path] = None,
     raw_text: Optional[str] = None,
-):
+) -> tuple[str, dict]:
     rule_result, context = rule_based_analysis(hand, info, hero_name, tournament_summary, input_path, raw_text)
     if rule_result:
         fields = parse_analysis_fields(rule_result)
@@ -2356,7 +2358,7 @@ def analyze_hand(
             confidence_source="rule",
             rule_verdict=summarize_rule_verdict(context),
             ai_explanation="Not used. A deterministic rule handled this spot.",
-        )
+        ), context
 
     rule_notes = [
         f"Decision type: {context['decision_type']}",
@@ -2445,9 +2447,9 @@ Rules:
             confidence_source="model",
             rule_verdict=summarize_rule_verdict(context),
             ai_explanation=fields["Reason"],
-        )
+        ), context
     except Exception as exc:
-        return f"Error: {exc}"
+        return f"Error: {exc}", {}
 
 
 def find_default_input_file() -> Optional[Path]:
@@ -2576,12 +2578,34 @@ def main():
             important_hands.append((hand, info))
 
     important_hands = important_hands[: args.limit]
-    analyses = [
-        analyze_hand(hand, info, args.hero, client, tournament_summary, input_path, text)
-        for hand, info in important_hands
-    ]
+    analyses = []
+    contexts = []
+    for hand, info in important_hands:
+        analysis, context = analyze_hand(hand, info, args.hero, client, tournament_summary, input_path, text)
+        analyses.append(analysis)
+        contexts.append(context)
+    
     report = build_report(input_path, hands, important_hands, analyses, args.hero, tournament_summary)
     output_path.write_text(report, encoding="utf-8")
+
+    json_path = output_path.with_suffix(".json")
+    json_export = {
+        "schema_version": "1",
+        "input_file": str(input_path),
+        "run_time": datetime.now().isoformat(timespec="seconds"),
+        "hands_analyzed": len(important_hands),
+        "spots": [
+            {
+                "index": i + 1,
+                "hero_bb": info.get("hero_bb"),
+                "position": info.get("position"),
+                "decision_type": ctx.get("decision_type", "unknown"),
+                "hand_class": ctx.get("hand_class", "unknown"),
+            }
+            for i, (_, info), ctx in zip(range(len(important_hands)), important_hands, contexts)
+        ],
+    }
+    json_path.write_text(json.dumps(json_export, indent=2), encoding="utf-8")
 
     print(f"Input: {input_path}")
     if tournament_summary:

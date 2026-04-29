@@ -180,7 +180,7 @@ def cmd_leak_examples(args) -> None:
             is_mistake = mistake_match and mistake_match.group(1).lower() not in ("no clear mistake", "none")
             
             match = False
-            if leak_type == "call_off_fold" and decision == "call_or_fold_vs_shove" and is_mistake:
+            if leak_type == "call_off_fold" and decision in ("call_vs_shove", "fold_vs_shove") and is_mistake:
                 match = True
             elif leak_type == "reshove_wrong" and decision == "reshove" and is_mistake:
                 match = True
