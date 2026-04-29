@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
 
+from confidence import wilson_confidence_interval, confidence_tier
 from hand_parser import identify_postflop_spec_tags, split_hands, read_file, extract_flop_cards
 from postflop_trees import build_flop_tree_spec_library, build_turn_tree_spec_library, build_river_tree_spec_library
 
@@ -191,6 +192,16 @@ def build_report(hero_name: str = DEFAULT_HERO_NAME, max_examples: int = 2, limi
                     }
                 )
 
+    from math import sqrt
+
+    for family_id, bucket_summaries in spot_summary.items():
+        for bucket_context, summary in bucket_summaries.items():
+            n = summary["hand_count"]
+            summary["confidence"] = confidence_tier(n)
+            for action, k in summary["hero_action_counts"].items():
+                lo, hi = wilson_confidence_interval(k, n)
+                summary[f"{action}_ci"] = [round(lo, 3), round(hi, 3)]
+
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "meta": {
@@ -207,7 +218,12 @@ def build_report(hero_name: str = DEFAULT_HERO_NAME, max_examples: int = 2, limi
             family_id: {
                 bucket_context: {
                     "hand_count": summary["hand_count"],
+                    "confidence": summary.get("confidence", "low"),
                     "hero_action_counts": _sorted_counter(summary["hero_action_counts"]),
+                    **{
+                        f"{action}_ci": summary.get(f"{action}_ci", [0.0, 1.0])
+                        for action in summary.get("hero_action_counts", {})
+                    },
                     "reachable_turn_family_counts": _sorted_counter(summary["reachable_turn_family_counts"]),
                     "reachable_river_family_counts": _sorted_counter(summary["reachable_river_family_counts"]),
                 }

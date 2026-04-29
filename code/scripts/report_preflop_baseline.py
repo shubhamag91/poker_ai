@@ -7,6 +7,7 @@ from preflop_baseline import (
     bucket_stack_depth, get_baseline, classify_action, compare_decision,
     get_call_off_baseline, get_reshove_baseline
 )
+from confidence import wilson_confidence_interval, confidence_tier
 
 PARSED_DIR = Path(__file__).parent.parent.parent / "data" / "hand_histories" / "parsed"
 
