@@ -9,6 +9,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from confidence import wilson_confidence_interval, confidence_tier, confidence_multiplier
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 PARSED_ROOT = PROJECT_ROOT / "data" / "hand_histories" / "parsed"
 POSTFLOP_ROOT = PROJECT_ROOT / "data" / "hand_histories" / "postflop_hero_flop_actions"
@@ -39,41 +41,6 @@ ICM_SENSITIVITY_MULTIPLIERS = {
     "middle": 1.1,
     "late": 1.2,
 }
-
-
-def wilson_confidence_interval(successes: int, total: int, confidence: float = 0.95) -> tuple[float, float]:
-    """Calculate Wilson score confidence interval"""
-    if total == 0:
-        return 0.0, 1.0
-    
-    from math import sqrt
-    p = successes / total
-    z = 1.96 if confidence == 0.95 else 1.645
-    denominator = 1 + z**2 / total
-    center = (p + z**2 / (2 * total)) / denominator
-    spread = z * sqrt((p * (1 - p) + z**2 / (4 * total)) / total) / denominator
-    return max(0.0, center - spread), min(1.0, center + spread)
-
-
-def confidence_tier(n: int) -> str:
-    """Determine confidence tier based on sample size"""
-    if n >= 20:
-        return "high"
-    elif n >= 8:
-        return "medium"
-    else:
-        return "low"
-
-
-def confidence_multiplier(n: int) -> float:
-    """Apply n-tier confidence damping"""
-    tier = confidence_tier(n)
-    if tier == "high":
-        return 1.0
-    elif tier == "medium":
-        return 0.7
-    else:
-        return 0.15
 
 
 def extract_icm_context(content: str) -> dict[str, Any]:
