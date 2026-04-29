@@ -41,6 +41,41 @@ ICM_SENSITIVITY_MULTIPLIERS = {
 }
 
 
+def wilson_confidence_interval(successes: int, total: int, confidence: float = 0.95) -> tuple[float, float]:
+    """Calculate Wilson score confidence interval"""
+    if total == 0:
+        return 0.0, 1.0
+    
+    from math import sqrt
+    p = successes / total
+    z = 1.96 if confidence == 0.95 else 1.645
+    denominator = 1 + z**2 / total
+    center = (p + z**2 / (2 * total)) / denominator
+    spread = z * sqrt((p * (1 - p) + z**2 / (4 * total)) / total) / denominator
+    return max(0.0, center - spread), min(1.0, center + spread)
+
+
+def confidence_tier(n: int) -> str:
+    """Determine confidence tier based on sample size"""
+    if n >= 20:
+        return "high"
+    elif n >= 8:
+        return "medium"
+    else:
+        return "low"
+
+
+def confidence_multiplier(n: int) -> float:
+    """Apply n-tier confidence damping"""
+    tier = confidence_tier(n)
+    if tier == "high":
+        return 1.0
+    elif tier == "medium":
+        return 0.7
+    else:
+        return 0.15
+
+
 def extract_icm_context(content: str) -> dict[str, Any]:
     """Extract ICM context from parsed file"""
     result = {
@@ -464,14 +499,16 @@ def build_leak_report() -> dict[str, Any]:
     
     all_leaks = preflop_leaks + postflop_leaks + turn_river_leaks
     
-    leak_counts = defaultdict(int)
+    leak_counts = defaultdict(lambda: defaultdict(int))
     leak_details = defaultdict(list)
     leak_icm_sum = defaultdict(float)
     leak_stages = defaultdict(list)
+    leak_with_baseline_dev = defaultdict(int)
     
     for leak in all_leaks:
         key = f"{leak['street']}:{leak['type']}"
-        leak_counts[key] += 1
+        leak_counts[key]["total"] += 1
+        leak_counts[key]["with_baseline"] += 1 if leak.get("baseline_deviation") else 0
         leak_icm_sum[key] += leak.get("icm_multiplier", 1.0)
         leak_stages[key].append(leak.get("icm_context", {}).get("stage", "unknown"))
         if len(leak_details[key]) < 3:
@@ -484,15 +521,27 @@ def build_leak_report() -> dict[str, Any]:
             })
     
     scored_leaks = []
-    for key, freq in leak_counts.items():
+    for key in leak_counts:
+        freq = leak_counts[key]["total"]
         street, leak_type = key.split(":")
         avg_icm = leak_icm_sum[key] / freq if freq > 0 else 1.0
         
         ev_cost = EV_COST_ESTIMATES.get(street, {}).get(leak_type, 0.5)
-        priority_score = freq * ev_cost * avg_icm
+        
+        # Apply confidence multiplier
+        conf_multiplier = confidence_multiplier(freq)
+        
+        # Calculate Wilson confidence interval
+        with_baseline = leak_counts[key].get("with_baseline", 0)
+        lower_ci, upper_ci = wilson_confidence_interval(with_baseline, freq)
+        
+        # Apply confidence to priority score
+        priority_score = freq * ev_cost * avg_icm * conf_multiplier
         
         stage_counts = Counter(leak_stages[key])
         top_stage = stage_counts.most_common(1)[0][0] if stage_counts else "unknown"
+        
+        confidence_tier_val = confidence_tier(freq)
         
         scored_leaks.append({
             "leak_type": leak_type,
@@ -502,14 +551,25 @@ def build_leak_report() -> dict[str, Any]:
             "icm_multiplier": round(avg_icm, 2),
             "icm_stage": top_stage,
             "priority_score": round(priority_score, 2),
+            "confidence_tier": confidence_tier_val,
+            "confidence_multiplier": conf_multiplier,
+            "wilson_lower_ci": round(lower_ci, 3),
+            "wilson_upper_ci": round(upper_ci, 3),
+            "baseline_deviations": with_baseline,
             "description": get_leak_description(leak_type),
             "examples": leak_details[key],
         })
     
     scored_leaks.sort(key=lambda x: x["priority_score"], reverse=True)
     
-    total_leaks = sum(leak_counts.values())
+    total_leaks = sum(leak_counts[k]["total"] for k in leak_counts)
     weighted_score = sum(l["priority_score"] for l in scored_leaks)
+    
+    # Confidence summary
+    tier_counts = Counter(l["confidence_tier"] for l in scored_leaks)
+    
+    # Baseline deviation summary
+    total_baseline_devs = sum(l.get("baseline_deviations", 0) for l in scored_leaks)
     
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -517,6 +577,8 @@ def build_leak_report() -> dict[str, Any]:
             "total_leaks_detected": total_leaks,
             "unique_leak_types": len(scored_leaks),
             "weighted_priority_score": round(weighted_score, 2),
+            "confidence_tiers": dict(tier_counts),
+            "baseline_deviations_found": total_baseline_devs,
         },
         "leak_rankings": scored_leaks,
     }
