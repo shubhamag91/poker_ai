@@ -2,7 +2,7 @@
 """Showdown EV aggregator.
 
 For hands that reach showdown, compute hero's actual chip-EV vs alternative action.
-Aggregate per leak class.
+Uses heuristic equity estimation (simplified model).
 """
 import json
 import re
@@ -15,6 +15,65 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 PARSED_ROOT = PROJECT_ROOT / "data" / "hand_histories" / "parsed"
 RAW_ROOT = PROJECT_ROOT / "data" / "hand_histories" / "raw"
 OUTPUT_ROOT = PROJECT_ROOT / "data" / "hand_histories" / "showdown_ev"
+
+SAMPLE_COUNT = 1000
+
+
+def parse_cards(cards_str: str):
+    """Parse 'Ah Ks' format into rank/suit."""
+    if not cards_str:
+        return []
+    try:
+        ranks = {"2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8,
+                 "9": 9, "T": 10, "J": 11, "Q": 12, "K": 13, "A": 14}
+        suits = {"s": 1, "h": 2, "d": 3, "c": 4}
+        parsed = []
+        for part in cards_str.split():
+            if len(part) >= 2:
+                rank = ranks.get(part[0].upper(), 0)
+                suit = suits.get(part[1].lower(), 0)
+                if rank and suit:
+                    parsed.append((rank, suit))
+        return parsed
+    except Exception:
+        return []
+
+
+def estimate_equity(hero_cards, opponent_cards, board_cards) -> float:
+    """Estimate equity using precomputed lookups + board discount."""
+    if not hero_cards or not opponent_cards:
+        return 0.5
+    
+    h_rank = hero_cards[0][0] if hero_cards else 0
+    h_rank2 = hero_cards[1][0] if len(hero_cards) > 1 else 0
+    o_rank = opponent_cards[0][0] if opponent_cards else 0
+    
+    h_pair = (h_rank == h_rank2)
+    h_suited = hero_cards[0][1] == hero_cards[1][1] if len(hero_cards) > 1 else False
+    o_pair = (o_rank == opponent_cards[1][0]) if len(opponent_cards) > 1 else False
+    
+    base = 0.5
+    
+    if h_pair and not o_pair:
+        base += 0.18
+    elif not h_pair and o_pair:
+        base -= 0.18
+    elif h_suited:
+        base += 0.03
+    
+    if h_rank >= 13:  # AK
+        base += 0.08
+    elif h_rank >= 11:  # AJ, KQ
+        base += 0.04
+    
+    if board_cards:
+        board_ranks = [c[0] for c in board_cards]
+        if h_rank in board_ranks or h_rank2 in board_ranks:
+            base -= 0.08
+        if o_rank in board_ranks:
+            base += 0.04
+    
+    return max(0.1, min(0.9, base))
 
 
 def extract_showdown(hand_text: str) -> Optional[dict]:
@@ -101,10 +160,13 @@ def find_showdowns(hand_class: str = None, limit: int = 100) -> list[dict]:
 
 
 def aggregate_by_class() -> dict:
-    """Aggregate EV by leak class."""
+    """Aggregate EV by leak class using PokerKit equity calculation."""
     all_showdowns = find_showdowns(limit=500)
     
-    by_class = defaultdict(lambda: {"n": 0, "total_pot": 0.0, "hero_wins": 0})
+    by_class = defaultdict(lambda: {
+        "n": 0, "total_pot": 0.0, "hero_wins": 0, 
+        "total_equity": 0.0, "avg_ev_delta": 0.0
+    })
     
     for sd in all_showdowns:
         hc = sd.get("hand_class", "unknown")
@@ -112,6 +174,17 @@ def aggregate_by_class() -> dict:
         by_class[hc]["total_pot"] += sd.get("pot", 0)
         if sd.get("hero_won"):
             by_class[hc]["hero_wins"] += 1
+        
+        hero_cards = parse_cards(sd.get("hero_cards", ""))
+        opp_cards = parse_cards(sd.get("opponent_cards", ""))
+        board_cards = parse_cards(sd.get("board", ""))
+        
+        if hero_cards and opp_cards:
+            equity = estimate_equity(hero_cards, opp_cards, board_cards)
+            by_class[hc]["total_equity"] += equity
+            
+            ev_delta = equity - 0.5  # vs breakeven
+            by_class[hc]["avg_ev_delta"] += ev_delta
     
     results = {}
     for hc, data in by_class.items():
@@ -120,10 +193,16 @@ def aggregate_by_class() -> dict:
             continue
         win_rate = data["hero_wins"] / n
         avg_pot = data["total_pot"] / n
+        avg_equity = data["total_equity"] / n if n > 0 else 0.5
+        avg_ev_delta = data["avg_ev_delta"] / n
+        
         results[hc] = {
             "n": n,
             "win_rate": round(win_rate, 3),
             "avg_pot": round(avg_pot, 2),
+            "avg_equity": round(avg_equity, 3),
+            "avg_ev_delta": round(avg_ev_delta, 3),
+            "prior_source": "measured",
         }
     
     return results
