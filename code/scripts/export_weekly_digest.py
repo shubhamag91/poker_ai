@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-"""Export weekly leak digest.
-
-Creates a single artifact summarizing leak state, deltas, and example hands.
-"""
+"""Export weekly leak digest with EV trends."""
 import argparse
 import json
 from datetime import datetime
@@ -11,11 +8,12 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 PARSED_ROOT = PROJECT_ROOT / "data" / "hand_histories" / "parsed"
-RAW_ROOT = PROJECT_ROOT / "data" / "hand_histories" / "raw"
 OUTPUT_ROOT = PROJECT_ROOT / "data" / "hand_histories" / "digests"
 LEAK_REPORT = PROJECT_ROOT / "data" / "hand_histories" / "leak_prioritization" / "latest.json"
+SHOWDOWN_ROOT = PROJECT_ROOT / "data" / "hand_histories" / "showdown_ev"
 
 TOP_N = 10
+SHOWDOWN_MIN_N = 30
 
 
 def get_week_identifier() -> str:
@@ -34,23 +32,14 @@ def load_leak_ranking() -> list[dict]:
         return []
 
 
-def find_hand_for_leak(leak_class: str) -> dict | None:
-    for json_file in sorted(PARSED_ROOT.glob("*_analysis.json"), key=lambda p: -p.stat().st_mtime):
-        try:
-            data = json.loads(json_file.read_text())
-        except:
-            continue
-        for spot in data.get("spots", []):
-            if spot.get("hand_class") == leak_class:
-                return {
-                    "file": json_file.stem,
-                    "hero_bb": spot.get("hero_bb"),
-                    "position": spot.get("position"),
-                    "decision_type": spot.get("decision_type"),
-                    "mistake": spot.get("mistake"),
-                    "better_play": spot.get("better_play"),
-                }
-    return None
+def load_showdown_ev() -> dict:
+    showdown_file = SHOWDOWN_ROOT / "latest.json"
+    if not showdown_file.exists():
+        return {}
+    try:
+        return json.loads(showdown_file.read_text())
+    except:
+        return {}
 
 
 def build_digest() -> str:
@@ -73,27 +62,10 @@ def build_digest() -> str:
         leak_type = leak.get("leak_type", "unknown")
         priority = leak.get("priority_score", 0)
         description = leak.get("description", "")
-        examples = leak.get("examples", [])
-        hand_class = examples[0].get("hand_class", "") if examples else ""
         
         lines.append(f"### {i}. {leak_type}")
         lines.append(f"**Priority Score**: {priority}")
         lines.append(f"**Description**: {description}")
-        if hand_class:
-            lines.append(f"**Example Hand Class**: {hand_class}")
-        if leak.get("icm_stage"):
-            lines.append(f"**ICM Stage**: {leak.get('icm_stage')}")
-        lines.append("")
-        
-        if hand_class:
-            hand = find_hand_for_leak(hand_class)
-            if hand:
-                lines.append(f"**Sample**: {hand['hero_bb']} BB @ {hand['position']}")
-                lines.append(f"- Mistake: {hand.get('mistake', '?')}")
-                lines.append(f"- Better: {hand.get('better_play', '?')}")
-                lines.append("")
-        
-        lines.append("---")
         lines.append("")
     
     lines.extend([
@@ -104,13 +76,15 @@ def build_digest() -> str:
     for i, leak in enumerate(leaks[:TOP_N], 1):
         lines.append(f"- [ ] {i}. {leak.get('leak_type', 'unknown')}")
     
-    lines.extend([
-        "",
-        "## Notes",
-        "",
-        "_Notes_",
-    ])
+    showdown_ev = load_showdown_ev()
+    if showdown_ev:
+        measured = [(hc, d) for hc, d in showdown_ev.items() if d.get("n", 0) >= SHOWDOWN_MIN_N]
+        if measured:
+            lines.extend(["", "## EV Trends (Measured)", ""])
+            for hc, d in measured[:5]:
+                lines.append(f"- **{hc}**: n={d['n']}, win_rate={d.get('win_rate', 0):.1%}")
     
+    lines.extend(["", "## Notes", "", "_Notes_"])
     return "\n".join(lines)
 
 
@@ -123,11 +97,7 @@ def main():
     week_id = get_week_identifier()
     
     OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
-    if args.output:
-        output_path = OUTPUT_ROOT / args.output
-    else:
-        output_path = OUTPUT_ROOT / f"digest_{week_id}.md"
-    
+    output_path = OUTPUT_ROOT / (args.output or f"digest_{week_id}.md")
     output_path.write_text(digest)
     print(f"Wrote: {output_path}")
 
