@@ -314,6 +314,7 @@ def build_report(hero_name: str = DEFAULT_HERO_NAME, limit_files: int | None = N
             "files_scanned": files_scanned,
             "hands_scanned": hands_scanned,
             "hands_with_tags": hands_with_tags,
+            "confidence": confidence_tier(hands_with_tags),
         },
         "delayed_cbet": {k: dict(v) for k, v in delayed_cbet.items()},
         "donk_leads": {k: dict(v) for k, v in donk_leads.items()},

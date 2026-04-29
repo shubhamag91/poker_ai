@@ -3,7 +3,7 @@
 # Last updated: 2026-04-29
 
 ## Current Milestone
-**Milestone C: Postflop Tendency Deepening** — Completed
+**Milestone D: Leak Prioritization Engine** — Completed
 
 ## Project Status
 - Linear project: https://linear.app/mose/project/poker-ai-e33721cdc012/overview
@@ -32,6 +32,13 @@
 - C.2: Postflop evaluator in leak report (13 flop leaks)
 - C.3: Turn/river baselines (15 turn + 8 river) + extractor
 - Total: 533 leaks in ranking (491 preflop + 42 postflop)
+
+### Milestone D (Completed 2026-04-29)
+- D.1: Wire preflop_baseline into leak report + Wilson CI
+- D.2: LLM↔baseline calibration (dual eval adds verdict_source, rule_verdict)
+- D.3: Shared confidence.py + wired into all reports
+- No parser/baseline corrections needed (aligned)
+- Confidence tier: high≥20 / medium≥8 / low<8
 
 ### Phase 0 (Completed 2026-04-29)
 - MOS-55: Foundational parser fixes

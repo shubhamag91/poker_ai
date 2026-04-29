@@ -198,6 +198,8 @@ def generate_baseline_report() -> str:
             if not baseline:
                 continue
             
+            n = s["total"]
+            tier = confidence_tier(n)
             total_hands += s["total"]
             total_leaks += len(s["leaks"])
             
@@ -205,7 +207,7 @@ def generate_baseline_report() -> str:
             min_rate = s["min_raises"] / s["total"] * 100 if s["total"] > 0 else 0
             fold_rate = s["folds"] / s["total"] * 100 if s["total"] > 0 else 0
             
-            lines.append(f"--- {depth} BB {pos.upper()} ---")
+            lines.append(f"--- {depth} BB {pos.upper()} [{tier}] ---")
             lines.append(f"  Hands: {s['total']} | Push: {s['pushes']} ({push_rate:5.0f}%) | Min-raise: {s['min_raises']:2d} ({min_rate:5.0f}%) | Fold: {s['folds']:2d} ({fold_rate:5.0f}%)")
             
             if s["leaks"]:
@@ -225,11 +227,12 @@ def generate_baseline_report() -> str:
             if total == 0:
                 continue
             
+            tier = confidence_tier(total)
             total_leaks += len(s["leaks"])
             total_hands += total
             
             call_rate = s["calls"] / total * 100
-            lines.append(f"--- {stack_bucket} {pos.upper()} ---")
+            lines.append(f"--- {stack_bucket} {pos.upper()} [{tier}] ---")
             lines.append(f"  Hands: {total} | Call: {s['calls']} ({call_rate:5.0f}%) | Fold: {s['folds']}")
             
             if s["leaks"]:
@@ -248,10 +251,11 @@ def generate_baseline_report() -> str:
             if s["reshoves"] == 0:
                 continue
             
+            tier = confidence_tier(s["reshoves"])
             total_leaks += len(s["leaks"])
             total_hands += s["reshoves"]
             
-            lines.append(f"--- {stack_bucket} {pos.upper()} ---")
+            lines.append(f"--- {stack_bucket} {pos.upper()} [{tier}] ---")
             lines.append(f"  Hands: {s['reshoves']} | Reshove: {s['reshoves']}")
             
             if s["leaks"]:

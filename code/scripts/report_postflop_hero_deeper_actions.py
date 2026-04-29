@@ -210,6 +210,22 @@ def build_report(hero_name: str = DEFAULT_HERO_NAME, max_examples: int = 2, limi
                         "hero_action": hero_action,
                         "prior": hero_river_decision["prior_actions"],
                     })
+ 
+    for family_id, bucket_summaries in turn_summary.items():
+        for spot_key, summary in bucket_summaries.items():
+            n = summary["hand_count"]
+            summary["confidence"] = confidence_tier(n)
+            for action, k in summary["hero_action_counts"].items():
+                lo, hi = wilson_confidence_interval(k, n)
+                summary[f"{action}_ci"] = [round(lo, 3), round(hi, 3)]
+
+    for family_id, bucket_summaries in river_summary.items():
+        for spot_key, summary in bucket_summaries.items():
+            n = summary["hand_count"]
+            summary["confidence"] = confidence_tier(n)
+            for action, k in summary["hero_action_counts"].items():
+                lo, hi = wilson_confidence_interval(k, n)
+                summary[f"{action}_ci"] = [round(lo, 3), round(hi, 3)]
 
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
