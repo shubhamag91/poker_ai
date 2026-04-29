@@ -1,0 +1,59 @@
+{
+  "articles": [],
+  "node_index": {
+    "push_fold": [
+      1
+    ],
+    "open_raise": [
+      6
+    ]
+  },
+  "chunks": [
+    {
+      "id": 0,
+      "source": "authors_2.md",
+      "text": "Snip Author\n===========\nDavid Rudie <d.rudie@gmail.com>\n\nContributors\n============\n* Kailan Blanks (TheKomputerKing)\n  * Higher resolution album artwork from Spotify\n\n* MindFlaw\n  * French translation\n\n* Azeirah\n  * Dutch translation\n\n* Lukas Michanek (SharpMelon)\n  * Swedish translation\n\n* Volker K\u00f6nigsb\u00fcscher\n  * German translation\n\n* Marks Polakovs (markspolakovs)\n  * Unicode WebClient support\n  * Updated artwork downloading for Spotify\n\n* Erik Jan Meijer (Eegee)\n  * Updated Dutch translation",
+      "nodes": []
+    },
+    {
+      "id": 1,
+      "source": "readme_2.md",
+      "text": "SNIP\n====\nCopyright 2012-2019 David Rudie <d.rudie@gmail.com>\nProject Page: [Snip](https://github.com/dlrudie/Snip)\n\nABOUT\n=====\nThis small application sits in the system tray and updates a text\nfile with the currently playing audio track.\n\nIt supports the following media players:\n* [Spotify](https://www.spotify.com/)\n* [iTunes](https://www.apple.com/itunes/)\n\nIf you choose to use iTunes, Snip will automatically launch it. (This\nis the behavior of the COM API and there's nothing I can do about i",
+      "nodes": [
+        "push_fold"
+      ]
+    },
+    {
+      "id": 2,
+      "source": "license_2.md",
+      "text": "# GNU GENERAL PUBLIC LICENSE\nVersion 3, 29 June 2007\n\nCopyright (C) 2007 [Free Software Foundation, Inc.](http://fsf.org/)\n\nEveryone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.",
+      "nodes": []
+    },
+    {
+      "id": 3,
+      "source": "license_2.md",
+      "text": "Preamble\nThe GNU General Public License is a free, copyleft license for software and other kinds of works.\n\nThe licenses for most software and other practical works are designed to take away your freedom to share and change the works. By contrast, the GNU General Public License is intended to guarantee your freedom to\nshare and change all versions of a program--to make sure it remains free software for all its users. We, the Free Software Foundation, use the GNU General Public License for most o",
+      "nodes": []
+    },
+    {
+      "id": 4,
+      "source": "license_2.md",
+      "text": "TERMS AND CONDITIONS\n\n### 0. Definitions.\n*This License* refers to version 3 of the GNU General Public License.\n\n*Copyright* also means copyright-like laws that apply to other kinds of works, such as semiconductor masks.\n\n*The Program* refers to any copyrightable work licensed under this License. Each licensee is addressed as *you*. *Licensees* and *recipients* may be individuals or organizations.\n\nTo *modify* a work means to copy from or adapt all or part of the work in a fashion requiring copy",
+      "nodes": []
+    },
+    {
+      "id": 5,
+      "source": "license_2.md",
+      "text": "END OF TERMS AND CONDITIONS\n### How to Apply These Terms to Your New Programs\nIf you develop a new program, and you want it to be of the greatest possible use to the public, the best way to achieve this is to make it free software which everyone can redistribute and change under these terms.\n\nTo do so, attach the following notices to the program. It is safest to attach them to the start of each source file to most effectively state the exclusion of warranty; and each file should have at least th",
+      "nodes": []
+    },
+    {
+      "id": 6,
+      "source": "changes_2.md",
+      "text": "CHANGES\n=======\n**v7.0.5 (2019-Sep-15):**\n* Made Spotify detection substantially better. Due to Windows API limits\n    you cannot get the main window handle from a process minimized to the\n    system tray. With this version Snip will only need to see the Spotify\n    window one time and it will work from then on until you restart Spotify.\n\n**v7.0.2 (2019-Jul-29):**\n* Changed timer from 5 seconds back to 1 second. However Snip now uses the\n    titlebar of Spotify to determine when tracks change an",
+      "nodes": [
+        "open_raise"
+      ]
+    }
+  ]
+}
