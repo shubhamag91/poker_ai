@@ -118,7 +118,7 @@ CBET_BASELINES: dict[str, CbetBaseline] = {
         cbet_small_freq=0.00,
         cbet_big_freq=0.00,
         check_freq=1.00,
-        description="SRP OOP: check back ace-high",
+        description="SRP OOP: check back ace-high. NOTE: donk leads tracked separately in DONK_LEAD_BASELINES.",
     ),
     ("srp_oop_defender", "OOP", "BROADWAY_STATIC", "shallow"): CbetBaseline(
         spot_key="srp_oop_defender",

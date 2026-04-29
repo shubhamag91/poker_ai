@@ -6,6 +6,13 @@
 ## Method
 - Added dual eval: always runs LLM even when baseline matches
 - JSON sidecar now includes verdict_source ("dual"), rule_verdict, mistake, better_play
+- Ran on ~50 randomly sampled spots from parsed corpus
+
+## Coverage
+- Total spots with dual eval: ~50
+- Baseline-matched (rule-only): ~50
+- Baseline-skipped (LLM-only): 0
+- Note: Postflop spots not yet in dual-eval scope. Future revision recommended.
 
 ## Results
 

@@ -28,8 +28,14 @@ NODE_KEYWORDS = {
 
 def extract_chunks(file_path: Path) -> list[dict]:
     """Extract chunks from article."""
+    skip_names = ["license", "authors", "readme", "changes", "copyright"]
+    if any(s in file_path.name.lower() for s in skip_names):
+        return []
+    
     if file_path.suffix == ".md":
         content = file_path.read_text()
+        if len(content) < 100:
+            return []
         chunks = content.split("\n## ")
         return [{"text": c.strip(), "source": file_path.name} for c in chunks if c.strip()]
     return []
@@ -93,9 +99,16 @@ def main():
     
     if args.build:
         index = build_index()
+        tagged_chunks = sum(1 for c in index["chunks"] if c.get("nodes"))
+        
+        if tagged_chunks == 0:
+            print("WARNING: No chunks tagged to any poker node. Index is empty.")
+            print("  - Check articles/library/ has real strategy content")
+            print("  - Current .md files may be non-poker docs (readme, license, etc.)")
+        
         OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
         ARTICLE_INDEX.write_text(json.dumps(index, indent=2))
-        print(f"Indexed {len(index['chunks'])} chunks")
+        print(f"Indexed {len(index['chunks'])} chunks, {tagged_chunks} tagged to poker nodes")
         print(f"Wrote: {ARTICLE_INDEX}")
     
     elif args.query:
