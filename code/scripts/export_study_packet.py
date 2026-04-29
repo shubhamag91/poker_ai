@@ -19,9 +19,31 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 PARSED_ROOT = PROJECT_ROOT / "data" / "hand_histories" / "parsed"
 RAW_ROOT = PROJECT_ROOT / "data" / "hand_histories" / "raw"
 OUTPUT_ROOT = PROJECT_ROOT / "data" / "hand_histories" / "study_packets"
+KNOWLEDGE_ROOT = PROJECT_ROOT / "data" / "knowledge"
+ARTICLE_INDEX = KNOWLEDGE_ROOT / "article_node_index.json"
 LEAK_JSON = PARSED_ROOT.glob("*_analysis.json")
 
 MAX_EXAMPLES = 5
+
+
+def lookup_snippets(node_id: str, limit: int = 3) -> list[dict]:
+    """Look up related snippets for a node ID."""
+    if not ARTICLE_INDEX.exists():
+        return []
+    try:
+        index = json.loads(ARTICLE_INDEX.read_text())
+    except:
+        return []
+    
+    chunk_ids = index.get("node_index", {}).get(node_id, [])[:limit]
+    results = []
+    for cid in chunk_ids:
+        chunk = index.get("chunks", [])[cid]
+        results.append({
+            "source": chunk.get("source", ""),
+            "text": chunk.get("text", "")[:300],
+        })
+    return results
 
 
 def extract_hand_by_index(raw_path: Path, index: int) -> str | None:
@@ -135,7 +157,29 @@ def build_packet(leak_class: str, bucket: str | None = None) -> str:
         "## Study Notes",
         "",
         "_Notes go here_",
-        "",
+    ])
+    
+    node_map = {
+        "premium_pair": "3bet",
+        "strong_broadway": "3bet",
+        "weak_ace": "open_raise",
+        "wheel_ace": "open_raise",
+        "medium_pair": "open_raise",
+    }
+    node_id = node_map.get(leak_class, leak_class.split("_")[0])
+    snippets = lookup_snippets(node_id)
+    if snippets:
+        lines.extend([
+            "",
+            "## Related Articles",
+            "",
+        ])
+        for s in snippets:
+            lines.append(f"**{s['source']}**")
+            lines.append(f"_{s['text'][:200]}...")
+            lines.append("")
+    
+    lines.extend([
         "## Actions Taken",
         "",
         "- [ ] Review hand 1",
