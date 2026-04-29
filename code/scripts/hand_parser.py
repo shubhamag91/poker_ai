@@ -2621,6 +2621,7 @@ def main():
         "schema_version": "1",
         "input_file": str(input_path),
         "run_time": datetime.now().isoformat(timespec="seconds"),
+        "prompt_version": "preflop_analysis_v1",
         "hands_analyzed": len(important_hands),
         "spots": spots_list,
     }
