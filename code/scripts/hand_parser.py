@@ -2350,16 +2350,8 @@ def analyze_hand(
     raw_text: Optional[str] = None,
 ) -> tuple[str, dict]:
     rule_result, context = rule_based_analysis(hand, info, hero_name, tournament_summary, input_path, raw_text)
-    if rule_result:
-        fields = parse_analysis_fields(rule_result)
-        return format_analysis_output(
-            fields=fields,
-            verdict_source="rule",
-            confidence_source="rule",
-            rule_verdict=summarize_rule_verdict(context),
-            ai_explanation="Not used. A deterministic rule handled this spot.",
-        ), context
-
+    rule_verdict = summarize_rule_verdict(context)
+    
     rule_notes = [
         f"Decision type: {context['decision_type']}",
         f"Stack bucket: {context.get('stack_bucket', 'unknown')}",
@@ -2388,12 +2380,17 @@ def analyze_hand(
         rule_notes.append("There is already at least one caller, so multi-way equity realization matters more than raw push-fold aggression.")
 
     rule_notes_block = "\n".join(f"- {note}" for note in rule_notes)
+    
+    baseline_note = ""
+    if rule_result:
+        baseline_note = f"\nBaseline verdict: {rule_result.strip()}"
+    
     prompt = f"""
 Elite MTT Coach Analysis.
 Hero Name: {hero_name} | Position: {info['position']} | Stack: {info['hero_bb']} BB | Cards: {info['hero_cards']}
 
 Rule Layer Notes:
-{rule_notes_block}
+{rule_notes_block}{baseline_note}
 
 Hand History:
 {hand}
@@ -2443,9 +2440,9 @@ Rules:
             fields["Reason"] = f"Close spot: {fields['Reason']}"
         return format_analysis_output(
             fields=fields,
-            verdict_source="hybrid",
+            verdict_source="dual",
             confidence_source="model",
-            rule_verdict=summarize_rule_verdict(context),
+            rule_verdict=rule_verdict,
             ai_explanation=fields["Reason"],
         ), context
     except Exception as exc:
@@ -2592,7 +2589,7 @@ def main():
     
     # Extract LLM verdict from analysis text
     def extract_verdict_fields(analysis: str) -> dict:
-        result = {"mistake": None, "better_play": None, "reason": None, "confidence": None, "verdict_source": None}
+        result = {"mistake": None, "better_play": None, "reason": None, "confidence": None, "verdict_source": None, "rule_verdict": None}
         for line in analysis.splitlines():
             if line.startswith("Mistake:"):
                 result["mistake"] = line.split(":", 1)[1].strip()
@@ -2604,6 +2601,8 @@ def main():
                 result["confidence"] = line.split(":", 1)[1].strip()
             elif line.startswith("Verdict source:"):
                 result["verdict_source"] = line.split(":", 1)[1].strip()
+            elif line.startswith("Rule verdict:"):
+                result["rule_verdict"] = line.split(":", 1)[1].strip()
         return result
     
     spots_list = []
